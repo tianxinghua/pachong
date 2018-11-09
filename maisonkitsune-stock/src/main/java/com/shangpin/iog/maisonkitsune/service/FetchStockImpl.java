@@ -1,12 +1,13 @@
-package com.shangpin.iog.maje.service;
+package com.shangpin.iog.maisonkitsune.service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.shangpin.iog.maje.dto.*;
+import com.shangpin.iog.maisonkitsune.dto.*;
 import com.shangpin.iog.utils.HttpResponse;
 import com.shangpin.iog.utils.HttpUtil45;
 import com.shangpin.iog.utils.HttpUtils;
+import com.shangpin.iog.utils.SpChromeDriverPool;
 import com.shangpin.openapi.api.sdk.client.OutTimeConfig;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.Header;
@@ -15,6 +16,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.springframework.stereotype.Component;
 
 import javax.activation.DataHandler;
@@ -28,6 +32,8 @@ import javax.mail.internet.MimeMultipart;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by wanner on 2018/6/27
@@ -59,6 +65,11 @@ public class FetchStockImpl {
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
 
+//    进程池
+    private static SpChromeDriverPool pool = null;
+
+    private static String chromeDriverPath = "D:/software/driver/chromedriver.exe";
+
     static {
         if (null == bdl){
             bdl = ResourceBundle.getBundle("conf");
@@ -87,8 +98,8 @@ public class FetchStockImpl {
     public void fetchItlyProductStock(){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============拉取maje库存数据开始 "+startDateTime+"=========================");
-        logger.info("==============拉取maje库存数据开始 "+startDateTime+"=========================");
+        System.out.println("============拉取maisonkitsune库存数据开始 "+startDateTime+"=========================");
+        logger.info("==============拉取maisonkitsune库存数据开始 "+startDateTime+"=========================");
 
         //1. 请求需要更新库存商品 信息接口
         failedSpSkuNoList = new ArrayList<>();
@@ -96,8 +107,8 @@ public class FetchStockImpl {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "maje-qty-"+todayStr+".csv";
-        String priceFilePath = filePath + "maje-price-"+todayStr+".csv";
+        String temFilePath = filePath + "maisonkitsune-qty-"+todayStr+".csv";
+        String priceFilePath = filePath + "maisonkitsune-price-"+todayStr+".csv";
         System.out.println("文件保存目录："+temFilePath);
         logger.info("文件保存目录："+temFilePath);
         try {
@@ -130,7 +141,7 @@ public class FetchStockImpl {
         List<ProductDTO> productDTOAllList =  new LinkedList<>();
 
         //获取第一页商品数据
-        ShangPinPageContent selfridgesPageContent = getShangPinPageContentByParam(supplierId,"","fr.maje.com",1, Integer.parseInt(pageSize));
+        ShangPinPageContent selfridgesPageContent = getShangPinPageContentByParam(supplierId,"","maisonkitsune.com",1, Integer.parseInt(pageSize));
         productDTOAllList.addAll(selfridgesPageContent.getZhiCaiResultList());
 
         if(selfridgesPageContent == null) return;
@@ -138,19 +149,22 @@ public class FetchStockImpl {
         Integer total = selfridgesPageContent.getTotal();
         Integer pageNumber = getPageNumber(total, 20);
         for (int i = 2; i <= pageNumber; i++) {
-            ShangPinPageContent temselfridgesPageContent = getShangPinPageContentByParam(supplierId,"","fr.maje.com", i, Integer.parseInt(pageSize));
+            ShangPinPageContent temselfridgesPageContent = getShangPinPageContentByParam(supplierId,"","maisonkitsune.com", i, Integer.parseInt(pageSize));
             if(temselfridgesPageContent!=null){
                 productDTOAllList.addAll(temselfridgesPageContent.getZhiCaiResultList());
             }else{ //请求失败重新 再次请求
-                temselfridgesPageContent = getShangPinPageContentByParam(supplierId,"","fr.maje.com", i, Integer.parseInt(pageSize));
+                temselfridgesPageContent = getShangPinPageContentByParam(supplierId,"","maisonkitsune.com", i, Integer.parseInt(pageSize));
                 if(temselfridgesPageContent!=null){
                     productDTOAllList.addAll(temselfridgesPageContent.getZhiCaiResultList());
                 }
             }
         }
 
-        logger.info("=====需要更新maje spProduct Size:"+productDTOAllList.size());
-        System.out.println("=====需要更新maje spProduct Size:"+productDTOAllList.size());
+//        获取到库中的数据，实例化进程池。
+        pool = new SpChromeDriverPool(3, chromeDriverPath, false);
+
+        logger.info("=====需要更新maisonkitsune spProduct Size:"+productDTOAllList.size());
+        System.out.println("=====需要更新maisonkitsune spProduct Size:"+productDTOAllList.size());
         //导出尚品库存数据
         exportQtyInfoForProductList(productDTOAllList);
 
@@ -166,9 +180,9 @@ public class FetchStockImpl {
             e.printStackTrace();
         }
         String endtDateTime = format.format(new Date());
-        logger.info("===================拉取maje库存数据结束 "+endtDateTime+"=========================");
-        System.out.println("=================拉取maje库存数据结束 "+endtDateTime+"=========================");
-
+        logger.info("===================拉取maisonkitsune库存数据结束 "+endtDateTime+"=========================");
+        System.out.println("=================拉取maisonkitsune库存数据结束 "+endtDateTime+"=========================");
+        pool.shutdownEnd();
     }
 
     /**
@@ -304,33 +318,40 @@ public class FetchStockImpl {
      * @param productDTO 商品信息
      */
     private static boolean solveProductQty(ProductDTO productDTO) {
+        Boolean resultFlag = true;
         String productUrl = productDTO.getProductUrl();
         List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
         int zhiCaiSkuResultListSize = zhiCaiSkuResultList.size();
         try {
-            Header header = new Header("User-Agent", "Mozilla/5.0 (Windows NT 6.1)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36)");
+            String userAgent = "Mozilla/5.0 (Windows NT 6.1)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36";
+
+            /*Header header = new Header("User-Agent", "Mozilla/5.0 (Windows NT 6.1)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36)");
             Header[] headers = new Header[1];
             headers[0] = header;
 
             HttpResponse response = HttpUtils.get(productUrl,headers);
-            //HttpResponse response = HttpUtils.get(productUrl);
-            if (response.getStatus()==200) {
-                String htmlContent = response.getResponse();
-                Document doc = Jsoup.parse(htmlContent);
+            //HttpResponse response = HttpUtils.get(productUrl);*/
+            WebDriver driver = null;
+            driver = pool.get(false);
+            driver.get(productUrl);
+            driver.manage().window().maximize();
 
-
+            if (driver!=null) {
+//                String htmlContent = response.getResponse();
                 /**
                  *   处理商品 的尺码 以及 库存信息
                  */
                 //判断当前包页面有没有尺码信息  有分成多个 product 没有 尺码为均码
-                Elements sizeElements=doc.select("#product-content > div.product-variations > ul > li.attribute.size > div > ul > li");
+//                Elements sizeElements=doc.select(".mk_size .swatch-option");
+                List<WebElement> sizeElements = driver.findElements(By.cssSelector(".mk_size .swatch-option"));
                 if(sizeElements!=null&&sizeElements.size()>0){
                     int spSkuSize = zhiCaiSkuResultList.size();
                     int pageSize=sizeElements.size();
                     for (int j = 0; j <spSkuSize ; j++) {
                         SkuDTO skuDTO = zhiCaiSkuResultList.get(j);
                         for (int i = 0; i <pageSize ; i++) {
-                            String sizeValue=sizeElements.get(i).select(".defaultSize").text().toString();
+//                            String sizeValue=sizeElements.get(i).text().toString();
+                            String sizeValue=sizeElements.get(i).getText().toString();
 
                             String temQty="";
                             try {
@@ -339,8 +360,9 @@ public class FetchStockImpl {
                                 if(!sizeValue.equals(jdbcSize)){
                                     continue;
                                 }
-                                temQty=sizeElements.get(i).attr("class").toString();
-                                if (temQty.contains("unselectable")){
+//                                temQty=sizeElements.get(i).attr("class").toString();
+                                temQty=sizeElements.get(i).getAttribute("class").toString();
+                                if (temQty.contains("disabled")){
                                     temQty=NO_STOCK;
                                 }
                                 else{
@@ -351,11 +373,12 @@ public class FetchStockImpl {
                                 temQty=NO_STOCK;
                             }
                             //
-                            String  price=doc.select("#pdpMain > div.wrapper-product-image-container.clearfix > div.product-col-2.product-detail > div.productPrices > div > span").attr("content").toString();
-
-                            byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
+//                            String  price=doc.select(".product-info-price .price-box .price").text().toString();
+                            String  price = driver.findElement(By.cssSelector(".product-info-price .price-box .price")).getText().toString();;
+                            price = rgNum(price);
+                            /*byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
                             String UTFSpace = new String(bytes,"utf-8");
-                            price = price.replaceAll(UTFSpace, "&nbsp;");
+                            price = price.replaceAll(UTFSpace, "&nbsp;");*/
                             String marketPrice = skuDTO.getMarketPrice();
                             if(marketPrice!=null){
                                 float temElementPrice = Float.parseFloat(price);
@@ -378,17 +401,21 @@ public class FetchStockImpl {
                     logger.error(productDTO.toString());
                     logger.error("===请求商品地址解析 商品尺码失败===========================================");
                     // 商品页面中没有获取到尺码信息重新请求
-                    return false;
+                    resultFlag = false;
+//                    return false;
                 }
             }else{
                 logger.error("================请求商品地址失败===========================================");
                 logger.error(productDTO.toString());
                 logger.error("================请求商品地址失败===========================================");
-                return false;
+                resultFlag = false;
+//                return false;
             }
+            pool.returnToPool(driver);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            resultFlag = false;
+//            return false;
         }
         //每一款商品休息2s
 //        try {
@@ -396,7 +423,19 @@ public class FetchStockImpl {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        return true;
+
+        return resultFlag;
+    }
+
+    private static String rgNum(String resultValue) {
+        resultValue = resultValue.replaceAll("\\s*", "");
+        Pattern compile = Pattern.compile("\\d*[.]?\\d*");
+        Matcher matcher = compile.matcher(resultValue);
+        String rgValue = "";
+        while(matcher.find()) {
+            rgValue += matcher.group();
+        }
+        return rgValue;
     }
     /**
      * 更新尚品 spSkuMarketPrice
@@ -583,7 +622,7 @@ public class FetchStockImpl {
             bodyPart = new MimeBodyPart();
 
             //实例化DataSource(来自jaf)，参数为文件的地址
-            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"maje-price-"+yesterdayDateStr+".csv");
+            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"maisonkitsune-price-"+yesterdayDateStr+".csv");
             //使用datasource实例化datahandler
             DataHandler dataHandler = new DataHandler(dataSource);
             bodyPart.setDataHandler(dataHandler);
@@ -604,17 +643,17 @@ public class FetchStockImpl {
         }
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         FetchStockImpl o=new FetchStockImpl();
         o.getFileToEmail();
-    }
+    }*/
     protected void getFileToEmail(){
         long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String fileName=bdl.getString("csvFilePath")+"maje-price-"+yesterdayDateStr+".csv";
-        File file=new File(bdl.getString("csvFilePath")+"maje-price-"+yesterdayDateStr+".csv");
+        String fileName=bdl.getString("csvFilePath")+"maisonkitsune-price-"+yesterdayDateStr+".csv";
+        File file=new File(bdl.getString("csvFilePath")+"maisonkitsune-price-"+yesterdayDateStr+".csv");
         try {
             FileInputStream fis = new FileInputStream(file);
             System.out.println("文件的大小是："+fis.available()+"\n");
@@ -650,18 +689,19 @@ public class FetchStockImpl {
             return false;
         }
     }
-   /* public static void main(String[] args) {
+   /*public static void main(String[] args) {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://fr.maje.com/fr/nouveautes/categories/pret-a-porter/ravira/H18RAVIRA.html?dwvar_H18RAVIRA_color=0102");
+        productDTO.setProductUrl("https://maisonkitsune.com/fr_en/tee-shirt-code-white-5b9a2643ae858.html");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
-        skuDTO.setSize("2");
-        skuDTO.setMarketPrice("274");
+        skuDTO.setSize("S");
+        skuDTO.setMarketPrice("77");
 
         zhiCaiSkuResultList.add(skuDTO);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
-        solveProductQty(productDTO);
-
+       pool = new SpChromeDriverPool(1, chromeDriverPath, false);
+       solveProductQty(productDTO);
+       pool.shutdownEnd();
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
     }*/
 
