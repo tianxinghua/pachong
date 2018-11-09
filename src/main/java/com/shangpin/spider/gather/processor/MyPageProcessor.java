@@ -1,5 +1,6 @@
 package com.shangpin.spider.gather.processor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,11 +9,13 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.spider.common.StrategyConstants;
+import com.shangpin.spider.common.SymbolConstants;
 import com.shangpin.spider.config.SpringContextHolder;
 import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
@@ -108,9 +111,35 @@ public class MyPageProcessor implements PageProcessor {
 				try {
 					if(StringUtils.isNotBlank(spiderRuleInfo.getXdetailUrlStrategy())&&StringUtils.isNotBlank(spiderRuleInfo.getXdetailUrlRules())){
 						Set<String> links = new HashSet<String>();
-						List<String> all = null;
+						List<String> all = new ArrayList<String>();
 						if(spiderRuleInfo.getXdetailUrlStrategy().equals(StrategyConstants.C)) {
-							all = page.getHtml().css(spiderRuleInfo.getXdetailUrlRules()).links().all();
+							String xdetailUrlRules = spiderRuleInfo.getXdetailUrlRules();
+							String[] gg = null;
+							if(xdetailUrlRules.contains(SymbolConstants.RULE_SPLIT_FLAG)) {
+								gg = xdetailUrlRules.split(SymbolConstants.RULE_SPLIT_FLAG);
+							}else {
+								gg = new String[]{xdetailUrlRules};
+							}
+							for (String detailRule : gg) {
+								if(detailRule.contains(SymbolConstants.ATTR_FLAG)){
+									String attrRule = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(), detailRule.length());
+									detailRule = detailRule.substring(0,detailRule.indexOf(SymbolConstants.ATTR_FLAG));
+									Elements elements = page.getHtml().getDocument().select(detailRule);
+									for (Element ele : elements) {
+										String detailLinkUrl = ele.attr(attrRule).toString();
+										if(StringUtils.isNotBlank(detailLinkUrl)) {
+											all.add(detailLinkUrl);
+										}
+									}
+								}else {
+									List<String> list = page.getHtml().css(detailRule).links().all();
+									for (String detailLinkUrl : list) {
+										if(StringUtils.isNotBlank(detailLinkUrl)) {
+											all.add(detailLinkUrl);
+										}
+									}
+								}
+							}
 						}else if(spiderRuleInfo.getXdetailUrlStrategy().equals(StrategyConstants.X)) {
 							all = page.getHtml().xpath(spiderRuleInfo.getXdetailUrlRules()).links().all();
 						}
