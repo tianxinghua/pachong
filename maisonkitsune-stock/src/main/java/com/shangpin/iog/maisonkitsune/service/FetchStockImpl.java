@@ -161,7 +161,7 @@ public class FetchStockImpl {
         }
 
 //        获取到库中的数据，实例化进程池。
-        pool = new SpChromeDriverPool(3, chromeDriverPath, true);
+        pool = new SpChromeDriverPool(3, chromeDriverPath, false);
 
         logger.info("=====需要更新maisonkitsune spProduct Size:"+productDTOAllList.size());
         System.out.println("=====需要更新maisonkitsune spProduct Size:"+productDTOAllList.size());
