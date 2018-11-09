@@ -79,35 +79,41 @@ public class SupplierProductPictureService {
 				String picUrl = picVO.getPicUrl();
 				Long spuId = picVO.getSupplierSpuId();
 				log.info("picUrl = " +picUrl + ",spuId = "+spuId);
+
+                Long spuPendingPicId = null;
 				HubSpuPendingPicDto picDto = supplierProductPictureManager.getSpuPendingPicDtoBySupplierIdAndPicUrl(picVO.getSupplierId(), picUrl);
 				if(null!=picDto){
-					log.info("pic  DataState = " +picDto.getDataState());
-					//如果连接存在 且状态为使用中 则不操作
-					if(DataState.NOT_DELETED.getIndex()==picDto.getDataState()){
-                         continue;
-					}else{
-						//更新图片状态
-						HubSpuPendingPicDto updatePic = new HubSpuPendingPicDto();
-						updatePic.setSpuPendingPicId(picDto.getSpuPendingPicId());
-						updatePic.setDataState(DataState.NOT_DELETED.getIndex());
-						updatePic.setMemo("");
-						supplierProductPictureManager.updateSelective(updatePic);
-						//更新spupending 图片状态
-						spuPendingService.updateSpuPendingPicState(picDto.getSupplierId(),picDto.getSupplierSpuNo());
+                    spuPendingPicId=picDto.getSpuPendingPicId();
+					log.info("pic  DataState = " +picDto.getDataState()+"spuPendingPicId:"+spuPendingPicId+"SpPicUrl : "+picDto.getSpPicUrl());
+					if(picDto.getSpPicUrl()!=null && !"".equals(picDto.getSpPicUrl())){//如果spurl不存在则要重新下载
+                        //如果连接存在 且状态为使用中 则不操作
+                        if(DataState.NOT_DELETED.getIndex()==picDto.getDataState()){
+                            continue;
+                        }else{
+                            //更新图片状态
+                            HubSpuPendingPicDto updatePic = new HubSpuPendingPicDto();
+                            updatePic.setSpuPendingPicId(picDto.getSpuPendingPicId());
+                            updatePic.setDataState(DataState.NOT_DELETED.getIndex());
+                            updatePic.setMemo("");
+                            supplierProductPictureManager.updateSelective(updatePic);
+                            //更新spupending 图片状态
+                            spuPendingService.updateSpuPendingPicState(picDto.getSupplierId(),picDto.getSupplierSpuNo());
 
-						continue;
-					}
+                            continue;
+                        }
+                    }
+
 				}else{
 					log.info(" not exist");
+                    try{
+                        spuPendingPicId = supplierProductPictureManager.save(picVO);//保存初始化数据
+                        log.info("spuPendingPicId = " + spuPendingPicId);
+                    }catch (Exception e){
+                        log.info("save  " + picUrl +" error"+ e.getMessage(),e);
+                    }
 				}
-				Long spuPendingPicId = null;
-				try{
 
-					spuPendingPicId = supplierProductPictureManager.save(picVO);//保存初始化数据
-					log.info("spuPendingPicId = " + spuPendingPicId);
-				}catch (Exception e){
-					log.info("save  " + picUrl +" error"+ e.getMessage(),e);
-				}
+
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
 				updateDto.setSupplierSpuId(picVO.getSupplierSpuId());
