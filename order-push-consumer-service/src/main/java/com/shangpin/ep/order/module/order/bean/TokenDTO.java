@@ -8,7 +8,7 @@ public class TokenDTO implements Serializable{
 	private static final long serialVersionUID = 4078982631318898469L;
 	
 	private String id;
-	private String refreshToken;
+	private String Token;
 	private String accessToken;
 	private Date createDate = new Date();
 	private String expireTime;
@@ -19,11 +19,11 @@ public class TokenDTO implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getRefreshToken() {
-		return refreshToken;
+	public String getToken() {
+		return Token;
 	}
-	public void setRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
+	public void setToken(String Token) {
+		this.Token = Token;
 	}
 	public String getAccessToken() {
 		return accessToken;

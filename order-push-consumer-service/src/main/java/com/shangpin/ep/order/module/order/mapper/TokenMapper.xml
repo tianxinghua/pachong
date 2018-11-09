@@ -3,7 +3,7 @@
 <mapper namespace="com.shangpin.ep.order.module.order.mapper.TokenMapper">
 
 	<resultMap id="tokenMap" type="com.shangpin.ep.order.module.order.bean.TokenDTO">
-        <result column="REFRESH_TOKEN" property="refreshToken" />
+        <result column="_TOKEN" property="Token" />
         <result column="ACCESS_TOKEN" property="accessToken" />
         <result column="CREATETIME" property="createDate" />
         <result column="EXPIRETIME" property="expireTime" />

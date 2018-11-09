@@ -5,7 +5,7 @@ public class NewAccessToken {
 	private String expires_in;
 	private String token_type;
 	private String scope;
-	private String refresh_token;
+	private String _token;
 	public String getAccess_token() {
 		return access_token;
 	}
@@ -30,11 +30,11 @@ public class NewAccessToken {
 	public void setScope(String scope) {
 		this.scope = scope;
 	}
-	public String getRefresh_token() {
-		return refresh_token;
+	public String get_token() {
+		return _token;
 	}
-	public void setRefresh_token(String refresh_token) {
-		this.refresh_token = refresh_token;
+	public void set_token(String _token) {
+		this._token = _token;
 	}
 	
 }

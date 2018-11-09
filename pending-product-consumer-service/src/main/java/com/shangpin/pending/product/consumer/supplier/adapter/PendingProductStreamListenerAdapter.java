@@ -843,4 +843,7 @@ public class PendingProductStreamListenerAdapter {
 	public void tricotPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
 		this.messageHandle(message, headers);
 	}
+	public void accuratimePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+	}
 }

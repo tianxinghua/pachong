@@ -200,6 +200,10 @@ public class OriginalProductStreamListenerAdapter {
     @Qualifier("suitnegoziHandler")
     private ISupplierHandler suitnegoziHandler;
 
+    @Autowired
+	@Qualifier("accuratimeHandler")
+	private ISupplierHandler accuratimeHandler;
+
 
 
 
@@ -981,4 +985,14 @@ public class OriginalProductStreamListenerAdapter {
 	public void tricotStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		atelierCommonHandler.handleOriginalProduct(message, headers);
 	}
+	/**
+	 * 供应商accuratime处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void accuratimeStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		accuratimeHandler.handleOriginalProduct(message, headers);
+	}
+
+
 }

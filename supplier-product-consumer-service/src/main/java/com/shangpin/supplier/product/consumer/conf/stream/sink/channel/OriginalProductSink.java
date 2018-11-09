@@ -187,6 +187,8 @@ public interface OriginalProductSink {
 	public static final String VIPGROUP = "vipgroupOriginalProduct";
 
 	public static final String TRICOT = "tricotOriginalProduct";
+
+	public static final String ACCURATIME = "accuratimeOriginalProduct";
 	//===============================
 	
 	/**
@@ -749,5 +751,12 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.TRICOT)
 	public MessageChannel tricotOriginalProduct();
+
+	/**
+	 * 供应商tricot通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.ACCURATIME)
+	public MessageChannel accuratimeOriginalProduct();
 
 }

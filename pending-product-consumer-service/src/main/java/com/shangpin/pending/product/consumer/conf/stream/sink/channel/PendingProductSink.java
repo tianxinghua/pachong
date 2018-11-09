@@ -186,6 +186,8 @@ public interface PendingProductSink {
 
 	public static final String TRICOT = "tricotPendingProduct";
 
+	public static final String ACCURATIME = "accuratimePendingProduct";
+
 	/**
 	 * 供货商fashionTamers通道组件配置
 	 * @return 供货商fashionTamers通道组件
@@ -739,4 +741,10 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.TRICOT)
 	public SubscribableChannel tricotPendingProduct();
+	/**
+	 * 供应商tricot通道组件配置
+	 * @return 供货商gebnegozio通道组件
+	 */
+	@Input(value = PendingProductSink.ACCURATIME)
+	public SubscribableChannel accuratimePendingProduct();
 }

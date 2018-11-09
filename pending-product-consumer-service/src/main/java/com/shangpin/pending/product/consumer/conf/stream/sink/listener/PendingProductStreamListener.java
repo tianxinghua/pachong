@@ -848,4 +848,7 @@ public class PendingProductStreamListener {
     public void suitnegoziPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
         adapter.suitnegoziPendingProductStreamListen(message,headers);
     }
-}
+	@StreamListener(PendingProductSink.ACCURATIME)
+	public void accuratimePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.accuratimePendingProductStreamListen(message,headers);
+	}}

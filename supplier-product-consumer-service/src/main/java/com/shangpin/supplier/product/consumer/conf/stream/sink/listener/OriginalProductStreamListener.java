@@ -874,4 +874,14 @@ public class OriginalProductStreamListener {
 	public void tricotStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
 		adapter.tricotStreamListen(message,headers);
 	}
+
+	/**
+	 * 供应商tricot原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.ACCURATIME)
+	public void accuratimeStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
+		adapter.accuratimeStreamListen(message,headers);
+	}
 }

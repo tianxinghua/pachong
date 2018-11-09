@@ -643,6 +643,16 @@ spring:
                         tricotPendingProduct:
                           destination: tricot.pending.product
                           content-type: application/json
+
+                        accuratimeOriginalProduct:
+                          destination: accuratime.original.product
+                          group: one
+                          consumer:
+                            concurrency: 5
+                            maxAttempts: 1
+                        accuratimePendingProduct:
+                          destination: accuratime.pending.product
+                          content-type: application/json
               rabbit:
                         bindings: 
                               supplierPictureProduct: 
@@ -1281,6 +1291,15 @@ spring:
                               tricotPendingProduct:
                                       producer:
                                         prefix: HA.
+                              accuratimeOriginalProduct:
+                                consumer:
+                                  prefix: HA.
+                                  autoBindDlq: false
+                                  requeueRejected: true
+                                  republishToDlq: false
+                              accuratimePendingProduct:
+                                producer:
+                                  prefix: HA.
         consul: 
           host: localhost
           port: 8500

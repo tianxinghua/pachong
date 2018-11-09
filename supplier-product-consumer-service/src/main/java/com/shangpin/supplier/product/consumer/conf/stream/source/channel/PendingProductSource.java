@@ -183,6 +183,7 @@ public interface PendingProductSource {
 	public static final String TRICOT = "tricotPendingProduct";
 
     public static final String SUITNEGOZI = "suitnegoziPendingProduct";
+	public static final String ACCURATIME = "accuratimePendingProduct";
 	/**
 	 * 供货商fashionTamers通道组件配置
 	 * @return 供货商fashionTamers通道组件
@@ -736,4 +737,11 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.TRICOT)
 	public MessageChannel tricotPendingProduct();
+
+	/**
+	 *accuratime 通道组件配置
+	 * @return 供货商accuratime通道组件
+	 */
+	@Output(value = PendingProductSource.ACCURATIME)
+	public MessageChannel accuratimePendingProduct();
 }
