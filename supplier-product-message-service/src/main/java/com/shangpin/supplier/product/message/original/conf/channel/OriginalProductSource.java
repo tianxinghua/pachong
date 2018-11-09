@@ -186,6 +186,7 @@ public interface OriginalProductSource {
 	public static final String VIPGROUP = "vipgroupOriginalProduct";
 
 	public static final String TRICOT = "tricotOriginalProduct";
+	public static final String ACCURATIME = "accuratimeOriginalProduct";
 
 	/**
      * 供货商fashionTamers通道组件配置
@@ -747,4 +748,11 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.TRICOT)
 	public MessageChannel tricot();
+	/**
+	 * 供货商tricot通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.ACCURATIME)
+	public MessageChannel accuratime();
+
 }

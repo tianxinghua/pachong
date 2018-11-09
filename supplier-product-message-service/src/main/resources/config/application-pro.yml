@@ -287,6 +287,9 @@ spring:
                         tricotOriginalProduct:
                               destination: tricot.original.product
                               content-type: application/json
+                        accuratimeOriginalProduct:
+                              destination: accuratime.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             fashionTamersOriginalProduct:
@@ -568,6 +571,9 @@ spring:
                             tricotOriginalProduct:
                                   producer:
                                            prefix: HA.
+                            accuratimeOriginalProduct:
+                              producer:
+                                prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 

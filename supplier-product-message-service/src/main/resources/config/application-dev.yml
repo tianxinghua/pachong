@@ -240,6 +240,9 @@ spring:
                         tricotOriginalProduct:
                               destination: tricot.original.product
                               content-type: application/json
+                        accuratimeOriginalProduct:
+                              destination: accuratime.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -468,6 +471,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             tricotOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            accuratimeOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson:
