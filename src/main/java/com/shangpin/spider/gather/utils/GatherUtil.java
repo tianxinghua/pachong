@@ -53,7 +53,12 @@ public class GatherUtil {
 	 */
 	public static String getHttpUrl(String url) {
 		String resultUrl = "";
-		if(url.contains(":")) {
+		if(url.toLowerCase().contains("http")) {
+			resultUrl = url;
+		}else {
+			resultUrl = "http:"+url;
+		}
+		/*if(url.contains(":")) {
 			String httpFlag = url.substring(0, url.indexOf(":"));
 			switch(httpFlag) {
 				case "http":
@@ -69,7 +74,7 @@ public class GatherUtil {
 				
 		}else {
 			resultUrl = "http:"+url;
-		}
+		}*/
 		return resultUrl;
 	}
 	
