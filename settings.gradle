@@ -17,22 +17,9 @@ include 'studio69-stock'
 include 'stefaniamode-stock'
 include 'redi-stock'
 
-include 'reebonz-stock'
-include 'thestyleside-stock'
-include 'gucci-stock'
-include 'louisvuitton-stock'
-include 'hermes-stock'
-include 'burberry_stock'
-include 'product-stock'
-include 'vietti-stock'
-include 'gebnegozio-stock'
-include 'theKooples_stock'
-include 'hermesFR-stock'
-include 'iog-web-container'
-include 'mcw-stock'
-include 'smets'
-include 'vipgroup-stock'
-include 'refreshtoken'
+
+include 'mytheresa-stock'
+
 
 
 

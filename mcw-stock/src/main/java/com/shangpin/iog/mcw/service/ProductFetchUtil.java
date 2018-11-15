@@ -57,39 +57,45 @@ public class ProductFetchUtil {
 		//定义供应商 skuNo （key） Quantita(value) Map集合
 		logger.info("===============Collection<String> skuNos size()================"+skuNos.size());
 		Map<String, String> spStockMap = new HashMap<>();
+		Map<String,String> map = new HashMap<>();
         String data = "";
 		try {
 
-            for (String str : skuNos) {
-				logger.info("开始抓取");
-				List<CsvDTO> csvLists = new ArrayList<CsvDTO>();
+//            for (String str : skuNos) {
+//				logger.info("开始抓取");
+//				List<CsvDTO> csvLists = new ArrayList<CsvDTO>();
 				try {
-					csvLists = DownloadAndReadCSV.readLocalCSV(CsvDTO.class, "\t");
+					List<CsvDTO> csvLists = DownloadAndReadCSV.readLocalCSV(CsvDTO.class, "\t");
 					logger.info("拉到的数据集合：" + csvLists);
-					logger.info("抓取结束");
-					if(csvLists!=null){
-						for (CsvDTO csvDTO : csvLists) {
-							String barcode = csvDTO.getBarcode();
-							System.out.println(barcode);
-							String skuId = csvDTO.getSkuId();
-							System.out.println(skuId);
-							SkuDTO skuDTO = new SkuDTO();
-							skuDTO.setProduct_sku(barcode);
-							skuDTO.setQty(skuId);
-							String product_sku=skuDTO.getProduct_sku();
-							String qty = skuDTO.getQty();
+							logger.info("抓取结束");
+							if(csvLists!=null){
+								for (CsvDTO csvDTO : csvLists) {
+									String barcode = csvDTO.getBarcode();
+									System.out.println(barcode);
+									String skuId = csvDTO.getSkuId();
+									System.out.println(skuId);
+									SkuDTO skuDTO = new SkuDTO();
+									skuDTO.setProduct_sku(barcode);
+									skuDTO.setQty(skuId);
+									String product_sku=skuDTO.getProduct_sku();
+									String qty = skuDTO.getQty();
 							spStockMap.put(product_sku,qty);
+						}
+						for(String skuNo : skuNos){
+							if(spStockMap.containsKey(skuNo)){
+								map.put(skuNo,spStockMap.get(skuNo));
+							}
 						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-            }
+//            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		logger.info("成功获取到的map大小  spStockMap.size======"+spStockMap.size());
-		return spStockMap;
+		return map;
 	}
 
 }
