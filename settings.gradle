@@ -22,4 +22,6 @@ include 'mytheresa-stock'
 
 
 
+include 'clarks_stock'
+include 'doler-stock'
 
