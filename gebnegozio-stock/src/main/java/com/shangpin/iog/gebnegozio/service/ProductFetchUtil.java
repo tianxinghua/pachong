@@ -106,10 +106,7 @@ public class ProductFetchUtil {
                 }
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
                 String url = stockUrl + urlStr;
-                logger.info("sku url = "+url);
-                logger.info("sku = " + sku);
                 String stockJson = selMessage(token , url);
-                logger.info("sku url response= "+stockJson);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
                     qty = stockDTO.getStockItem().getQty();
@@ -123,111 +120,7 @@ public class ProductFetchUtil {
         }
         return  qty;
     }
-    /**
-     *  获取token
-     */
-    /*public String selToken(){
-        String token = "";
-        // 存储相关的header值
-        Map<String,String> header = new HashMap<String, String>();
-        header.put("Content-Type", "application/json");
-        // 请求正文内容
-        String json = "{\"username\":\"ming.liu@shangpin.com\",\"password\":\"Ex7n4AQ5\"}";
-        //发送请求
-        HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,postUrl, null, header, json);
-        if(null != response && response.size() > 0 && response.get("code").equals("200") ){
-            token = response.get("resBody");
-            token = token.substring( 1, token.length()-1 );
-            logger.info("获取geb的token为：" + token);
-            System.out.println("获取geb的token为：" + token);
-            SupplierToken supplierToken = queryToken(supplierId);
-            if (null == supplierToken){
-                addToken(token);//token入库
-            }else {
-                updateToken(token);//更新token
-            }
-        }else {
-            logger.info("获取token异常，重新获取一次："+ response.get("message"));
-            HashMap<String,String> tokenUpdateResp = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,postUrl, null, header, json);
-            if(null != tokenUpdateResp && tokenUpdateResp.size() > 0 && tokenUpdateResp.get("code").equals("200") ) {
-                token = tokenUpdateResp.get("resBody");
-                token = token.substring(1, token.length() - 1);
-                SupplierToken supplierToken = queryToken(supplierId);
-                if (null == supplierToken){
-                    addToken(token);//token入库
-                }else {
-                    updateToken(token);//更新token
-                }
-            }
 
-        }
-        return token;
-    }*/
-    /**
-     * 添加token到数据库
-     * @param token
-     * @return
-     */
-    public void addToken(String token) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        SupplierToken supplierTokenDTO = new SupplierToken();
-        supplierTokenDTO.setAccessToken(token);
-        supplierTokenDTO.setCreateTime(df.format(new Date()));// new Date()为获取当前系统时间
-        supplierTokenDTO.setSupplierId(supplierId);
-
-        String supplierToken = gson.toJson(supplierTokenDTO);
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("supplierToken", supplierToken);
-        String result = null;
-        TokenResp tokenResp = new TokenResp();
-        try {
-            result = HttpUtil45.operateData("post", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
-                    1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
-            System.out.println("数据库添加token结果：" + result);
-            logger.info("数据库添加token结果：" + result);
-            tokenResp = gson.fromJson( result, TokenResp.class);
-            if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
-                logger.info("数据库添加token成功：" + token);
-                System.out.println("数据库添加token成功：" + token);
-            }else {
-                logger.info("数据库添加token失败：" + tokenResp.getMessage());
-                System.out.println("数据库添加token失败：" + tokenResp.getMessage());
-            }
-        } catch (ServiceException e) {
-            logger.error("数据库添加token异常：" + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    public void updateToken(String token){
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        SupplierToken supplierTokenDTO = new SupplierToken();
-        supplierTokenDTO.setAccessToken(token);
-        supplierTokenDTO.setExpireTime(df.format(new Date()));// new Date()为获取当前系统时间
-        supplierTokenDTO.setSupplierId(supplierId);
-
-        String supplierToken = gson.toJson(supplierTokenDTO);
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("supplierToken", supplierToken);
-        String result = null;
-        TokenResp tokenResp = new TokenResp();
-        try {
-            result = HttpUtil45.operateData("put", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
-                    1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
-            System.out.println("数据库更新token结果：" + result);
-            logger.info("数据库更新token结果：" + result);
-            tokenResp = gson.fromJson( result, TokenResp.class);
-            if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
-                logger.info("数据库更新token成功：" + token);
-                System.out.println("数据库更新token成功：" + token);
-            }else {
-                logger.info("数据库更新token失败：" + tokenResp.getMessage());
-                System.out.println("数据库更新token失败：" + tokenResp.getMessage());
-            }
-        } catch (ServiceException e) {
-            logger.error("数据库更新token异常：" + e.getMessage());
-            e.printStackTrace();
-        }
-    }
     /**
      *  根据 supplierId 查token
      * @param supplierId
@@ -241,24 +134,17 @@ public class ProductFetchUtil {
         try {
             String result = HttpUtil45.operateData("get", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
                     1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
-            System.out.println("根据 supplierId 查token：" + result);
-            logger.info("根据 supplierId 查token：" + result);
             tokenResp = gson.fromJson( result, TokenResp.class);
             String data = tokenResp.getData();
             if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
                 if( null != data && !data.equals("") ){
                     supplierTokenDTO = gson.fromJson(data,SupplierToken.class);
-                    logger.info("数据库存在supplierId为 "+supplierId+" 的token" + data);
-                    System.out.println("数据库存在supplierId为 "+supplierId+" 的token" + data);
                 }else {
                     supplierTokenDTO = null;
-                    logger.info("数据库不存在supplierId为 "+supplierId+" 的token" + data);
-                    System.out.println("数据库不存在supplierId为 "+supplierId+" 的token" + data);
                 }
             }else {
                 supplierTokenDTO = null;
                 logger.info("根据 supplierId 查token失败：" + tokenResp.getMessage());
-                System.out.println("根据 supplierId 查token失败：" + tokenResp.getMessage());
             }
         } catch (ServiceException e) {
             logger.error("根据 supplierId 查token异常：" + e.getMessage());
