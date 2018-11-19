@@ -552,13 +552,15 @@ public class FetchStockImpl  {
                     mapDate.put("qty",NO_STOCK);
                     mapDate.put("qtyDesc","预售");
                 }else if(qtyStr.contains("DISPONIBILE")){
-                    if(qtyStrDesc.contains("1-2")){
+                    if(qtyStrDesc.contains("1-2 giorni lavorativi")){
                         mapDate.put("qty",IN_STOCK);
                         mapDate.put("qtyDesc","有货");
                     }else{
                         mapDate.put("qty",NO_STOCK);
                         mapDate.put("qtyDesc","发货时长超过两天");
                     }
+                }else{
+                    mapDate.put("qty",NO_STOCK);
                 }
             }else{
                 // 售罄
