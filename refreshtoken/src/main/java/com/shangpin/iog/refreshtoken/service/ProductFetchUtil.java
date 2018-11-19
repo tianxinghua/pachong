@@ -51,8 +51,6 @@ public class ProductFetchUtil {
         if(null != response && response.size() > 0 && response.get("code").equals("200") ){
             token = response.get("resBody");
             token = token.substring( 1, token.length()-1 );
-            logger.info("获取geb的token为：" + token);
-            System.out.println("获取geb的token为：" + token);
             SupplierToken supplierToken = queryToken(gebSupplierId);
             if (null == supplierToken){
                 addToken(token,gebSupplierId);//token入库
@@ -90,7 +88,6 @@ public class ProductFetchUtil {
                 String errorCode = tokenResp.getErrorCode();
                 if(errorCode.equals("0")){
                     token = tokenResp.getToken();
-                    System.out.println("获取vip的token为：" + token);
                     SupplierToken supplierToken = queryToken(vipSupplierId);
                     if (null == supplierToken){
                         addToken(token,vipSupplierId);//token入库
@@ -100,7 +97,6 @@ public class ProductFetchUtil {
                 }else if (errorCode.equals("2")){
                     logger.info("获取token间隔时间太短：" + tokenResp.getErrorMessage());
                     token = tokenResp.getToken();
-                    System.out.println("获取vip的token为：" + token);
                     SupplierToken supplierToken = queryToken(vipSupplierId);
                     if (null == supplierToken){
                         addToken(token,vipSupplierId);//token入库
@@ -115,7 +111,6 @@ public class ProductFetchUtil {
                         String errorUpdateCode = tokenUpdateResp.getErrorCode();
                         if (errorUpdateCode.equals("0")) {
                             token = tokenResp.getToken();
-                            System.out.println("获取vip的token为：" + token);
                             SupplierToken supplierToken = queryToken(vipSupplierId);
                             if (null == supplierToken) {
                                 addToken(token, vipSupplierId);//token入库
@@ -125,7 +120,6 @@ public class ProductFetchUtil {
                         } else if (errorUpdateCode.equals("2")) {
                             logger.info("获取token间隔时间太短：" + tokenResp.getErrorMessage());
                             token = tokenResp.getToken();
-                            System.out.println("获取vip的token为：" + token);
                             SupplierToken supplierToken = queryToken(vipSupplierId);
                             if (null == supplierToken) {
                                 addToken(token, vipSupplierId);//token入库
@@ -159,15 +153,10 @@ public class ProductFetchUtil {
         try {
             result = HttpUtil45.operateData("post", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
                     1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
-            System.out.println("数据库添加token结果：" + result);
-            logger.info("数据库添加token结果：" + result);
             tokenResp = gson.fromJson( result, TokenResp.class);
             if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
-                logger.info("数据库添加token成功：" + token);
-                System.out.println("数据库添加token成功：" + token);
             }else {
                 logger.info("数据库添加token失败：" + tokenResp.getMessage());
-                System.out.println("数据库添加token失败：" + tokenResp.getMessage());
             }
         } catch (ServiceException e) {
             logger.error("数据库添加token异常：" + e.getMessage());
@@ -189,15 +178,10 @@ public class ProductFetchUtil {
         try {
             result = HttpUtil45.operateData("put", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
                     1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
-        System.out.println("数据库更新token结果：" + result);
-        logger.info("数据库更新token结果：" + result);
         tokenResp = gson.fromJson( result, TokenResp.class);
         if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
-            logger.info("数据库更新token成功：" + token);
-            System.out.println("数据库更新token成功：" + token);
         }else {
             logger.info("数据库更新token失败：" + tokenResp.getMessage());
-            System.out.println("数据库更新token失败：" + tokenResp.getMessage());
         }
     } catch (ServiceException e) {
         logger.error("数据库更新token异常：" + e.getMessage());
@@ -218,24 +202,17 @@ public class ProductFetchUtil {
             String result = null;
                 result = HttpUtil45.operateData("get", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
                         1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
-            System.out.println("根据 supplierId 查token：" + result);
-            logger.info("根据 supplierId 查token：" + result);
             tokenResp = gson.fromJson( result, TokenResp.class);
             String data = tokenResp.getData();
             if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
                 if( null != data && !data.equals("") ){
                     supplierTokenDTO = gson.fromJson(data,SupplierToken.class);
-                    logger.info("数据库存在supplierId为 "+supplierId+" 的token：" + data);
-                    System.out.println("数据库存在supplierId为 "+supplierId+" 的token：" + data);
                 }else {
                     supplierTokenDTO = null;
-                    logger.info("数据库不存在supplierId为 "+supplierId+" 的token：" + data);
-                    System.out.println("数据库不存在supplierId为 "+supplierId+" 的token：" + data);
                 }
             }else {
                 supplierTokenDTO = null;
                 logger.info("根据 supplierId 查token失败：" + tokenResp.getMessage());
-                System.out.println("根据 supplierId 查token失败：" + tokenResp.getMessage());
             }
         } catch (ServiceException e) {
             logger.error("根据 supplierId 查token异常：" + e.getMessage());

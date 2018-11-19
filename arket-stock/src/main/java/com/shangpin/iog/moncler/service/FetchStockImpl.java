@@ -61,15 +61,15 @@ public class FetchStockImpl
   {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     String startDateTime = format.format(new Date());
-    System.out.println("============拉取mytheresa库存信息开始 " + startDateTime + "=========================");
-    logger.info("==============拉取mytheresa库存信息开始" + startDateTime + "=========================");
+    System.out.println("============拉取arketa库存信息开始 " + startDateTime + "=========================");
+    logger.info("==============拉取arket库存信息开始" + startDateTime + "=========================");
     
     failedSpSkuNoList = new ArrayList();
     
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     String todayStr = simpleDateFormat.format(new Date());
     
-    String temFilePath = filePath + "mytheresa-qty-" + todayStr + ".csv";
+    String temFilePath = filePath + "arket-qty-" + todayStr + ".csv";
     System.out.println("文件保存目录" + temFilePath);
     logger.info("文件保存目录" + temFilePath);
     try
@@ -91,7 +91,7 @@ public class FetchStockImpl
     }
     List<ProductDTO> productDTOAllList = new LinkedList();
     
-    ShangPinPageContent monclerPageContent = getShangPinPageContentByParam(supplierId, "", "www.mytheresa.com", Integer.valueOf(1), Integer.valueOf(Integer.parseInt(pageSize)));
+    ShangPinPageContent monclerPageContent = getShangPinPageContentByParam(supplierId, "", "www.arket.com", Integer.valueOf(1), Integer.valueOf(Integer.parseInt(pageSize)));
     
     productDTOAllList.addAll(monclerPageContent.getZhiCaiResultList());
     if (monclerPageContent == null) {
@@ -101,7 +101,7 @@ public class FetchStockImpl
     Integer pageNumber = getPageNumber(total, Integer.valueOf(20));
     for (int i = 2; i <= pageNumber.intValue(); i++)
     {
-      ShangPinPageContent temmonclerPageContent = getShangPinPageContentByParam(supplierId, "", "www.mytheresa.com", Integer.valueOf(i), Integer.valueOf(Integer.parseInt(pageSize)));
+      ShangPinPageContent temmonclerPageContent = getShangPinPageContentByParam(supplierId, "", "www.arket.com", Integer.valueOf(i), Integer.valueOf(Integer.parseInt(pageSize)));
       List<ProductDTO> zhiCaiResultList = temmonclerPageContent.getZhiCaiResultList();
       ProductDTO localProductDTO;
       for (Iterator localIterator = zhiCaiResultList.iterator(); localIterator.hasNext(); localProductDTO = (ProductDTO)localIterator.next()) {}
@@ -111,14 +111,14 @@ public class FetchStockImpl
       }
       else
       {
-        temmonclerPageContent = getShangPinPageContentByParam(supplierId, "", "www.mytheresa.com", Integer.valueOf(i), Integer.valueOf(Integer.parseInt(pageSize)));
+        temmonclerPageContent = getShangPinPageContentByParam(supplierId, "", "www.arket.com", Integer.valueOf(i), Integer.valueOf(Integer.parseInt(pageSize)));
         if (temmonclerPageContent != null) {
           productDTOAllList.addAll(temmonclerPageContent.getZhiCaiResultList());
         }
       }
     }
-    logger.info("=====需要更新mytheresa spProduct Size:" + productDTOAllList.size());
-    System.out.println("=====需要更新mytheresa spProduct Size:" + productDTOAllList.size());
+    logger.info("=====需要更新arket spProduct Size:" + productDTOAllList.size());
+    System.out.println("=====需要更新arket spProduct Size:" + productDTOAllList.size());
     
     exportQtyInfoForProductList(productDTOAllList);
     
@@ -127,8 +127,8 @@ public class FetchStockImpl
       repeatSolveFailedSpSkuNo((SpSkuNoDTO)failedSpSkuNoList.get(i));
     }
     String endtDateTime = format.format(new Date());
-    logger.info("===================拉取mytheresa库存信息结束 " + endtDateTime + "=========================");
-    System.out.println("=================拉取mytheresa库存信息结束 " + endtDateTime + "=========================");
+    logger.info("===================拉取arket库存信息结束 " + endtDateTime + "=========================");
+    System.out.println("=================拉取arket库存信息结束 " + endtDateTime + "=========================");
   }
   
   public static Integer getPageNumber(Integer total, Integer pageSize)
@@ -242,7 +242,7 @@ public class FetchStockImpl
   private static boolean solveProductQty(ProductDTO productDTO)
   {
     String productUrl = productDTO.getProductUrl();
-    if (!productDTO.getProductUrl().contains("www.mytheresa.com")) {
+    if (!productDTO.getProductUrl().contains("www.arket.com")) {
       return true;
     }
     System.out.println(productUrl);
@@ -258,35 +258,19 @@ public class FetchStockImpl
         
         String price = "";
 
-        String priceElements = doc.select("div.product-shop").select("span.price").text();
-        String price3 = doc.select(".price-info").select("div.price-box").select("p.special-price").text();
-        if (!(StringUtils.isEmpty(price3)))
-        {
-          price = price3.replace(",", "").replace(" ", "").replace("£","");
-        }else {
-          price = priceElements.replace(",", "").replace(" ", "").replace("£","");
-        }
+        String priceElements =doc.select("div.product-name-price-wrapper").select("label").text();
+        price = priceElements.replace(",", "").replace(" ", "").replace("£","");
         byte[] bytes = { -62, -96 };
         String UTFSpace = new String(bytes, "utf-8");
         price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;", "");
-
         Elements temSizeElements = doc.select("div.product-options").select("div.size-chooser").select("li");
-        String a = "Add to Shopping Bag";
         if (temSizeElements.size() == 0)
         {
           String temQty = "";
-          String s = doc.select("div.product-shop").select("div.add-to-cart").text();
-          if (s.equals(a)) {
-            temQty = IN_STOCK;
-          } else {
-            temQty = NO_STOCK;
-          }
+          temQty = IN_STOCK;
           SkuDTO skuDTO = (SkuDTO)zhiCaiSkuResultList.get(0);
           String spSizeName = skuDTO.getSize();
           String marketPrice = skuDTO.getMarketPrice();
-          if (StringUtils.isBlank(price)){
-            price=marketPrice;
-          }
           if (marketPrice != null)
           {
             float temElementPrice = Float.parseFloat(price);
@@ -303,94 +287,6 @@ public class FetchStockImpl
             loggerError.error("getMarketPrice 为空 ProductDTO:" + productDTO.toString());
           }
           exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
-        }
-        else if ((temSizeElements != null) && (temSizeElements.size() > 0))
-        {
-          int spSkuSize = zhiCaiSkuResultList.size();
-          int pageSize = temSizeElements.size();
-          for (int j = 0; j < spSkuSize; j++)
-          {
-            SkuDTO skuDTO = (SkuDTO)zhiCaiSkuResultList.get(j);
-            for (int i = 0; i < pageSize; i++)
-            {
-              String text = ((Element)temSizeElements.get(i)).text();
-              if (!text.contains("size"))
-              {
-                Element sizeElement = (Element)temSizeElements.get(i);
-                
-                String temElementSizeName = "";
-                if (sizeElement.text().contains("DT")) {
-                  temElementSizeName = sizeElement.text().split("/")[0];
-                } else {
-                  String sizeValue;
-                  if (sizeElement.text().contains("-")&& sizeElement.text().contains("/")){
-                    sizeValue = sizeElement.text().split("-")[0].replace(" ","");
-                    sizeValue=sizeElement.text().split("/")[0].replace(" ","");
-                    temElementSizeName=sizeValue;
-                  }else if (sizeElement.text().contains("-")){
-                    sizeValue = sizeElement.text().split("-")[0].replace(" ","");
-                    temElementSizeName=sizeValue;
-                  }else if (sizeElement.text().contains("/")){
-                    sizeValue = sizeElement.text().split("/")[0].replace(" ","");
-                    temElementSizeName=sizeValue;
-                  }
-                  else {
-                    temElementSizeName=sizeElement.text();
-                  }
-
-                }
-                String spSizeName = skuDTO.getSize();
-                String s=temElementSizeName.trim();
-                if (temElementSizeName.contains("DT")) {
-                  String replace = temElementSizeName.replace(" ", "");
-                  String[] dts = replace.split("DT");
-                   s = "DT"+dts[0] + " " + dts[1];
-                }
-                if (temElementSizeName.contains("IT")) {
-                  String replace = temElementSizeName.replace(" ", "");
-                  String[] dts = replace.split("IT");
-                  s = "IT"+dts[0] + " " + dts[1];
-                }
-                if (temElementSizeName.contains("FR")) {
-                  String replace = temElementSizeName.replace(" ", "");
-                  String[] dts = replace.split("FR");
-                  s = dts[1];
-                }
-                if (temElementSizeName.contains("EU")) {
-                  String replace = temElementSizeName.replace(" ", "");
-                  String[] dts = replace.split("EU");
-                  s = dts[1];
-                }
-                if (s.equals(spSizeName))
-                {
-                  String temQty = "";
-                  if (text.contains(" - Add to wishlist")) {
-                    temQty =NO_STOCK;
-                  } else {
-                    temQty =IN_STOCK;
-                  }
-                  String marketPrice = skuDTO.getMarketPrice();
-                  if (marketPrice != null)
-                  {
-                    float temElementPrice = Float.parseFloat(price);
-                    float spMarketPrice = Float.parseFloat(marketPrice);
-                    if (temElementPrice != spMarketPrice)
-                    {
-                      updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(), price);
-                      logger.info("推送 价格成功" + skuDTO.getSupplierSkuNo() + " 原价" + marketPrice + " 新价" + price);
-                      System.out.println("推送 价格成功" + skuDTO.getSupplierSkuNo() + " 原价" + marketPrice + " 新价" + price);
-                    }
-                  }
-                  else
-                  {
-                    loggerError.error("getMarketPrice ���� ProductDTO:" + productDTO.toString());
-                  }
-                  exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
-                  break;
-                }
-              }
-            }
-          }
         }
         else
         {
@@ -547,11 +443,11 @@ public class FetchStockImpl
   public static void main(String[] args)
   {
     ProductDTO productDTO = new ProductDTO();
-    productDTO.setProductUrl("https://www.mytheresa.com/en-gb/gucci-dionysus-gg-supreme-small-coated-canvas-shoulder-bag-867476.html");
+    productDTO.setProductUrl("https://www.arket.com/en_gbp/men/jackets-coats/product.high-density-topcoat-black.0491522001.html");
     List<SkuDTO> zhiCaiSkuResultList = new ArrayList();
     SkuDTO skuDTO = new SkuDTO();
     skuDTO.setSpSkuNo("30968589002");
-    skuDTO.setSize("34");
+    skuDTO.setSize("46");
     skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
     skuDTO.setMarketPrice("350.0");
     zhiCaiSkuResultList.add(skuDTO);

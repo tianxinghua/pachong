@@ -24,20 +24,14 @@ public class Schedule {
 
 	@Scheduled(cron="${getGebTokenJobSchedule}")
 	public void getGebTokenMethod(){
-		System.out.println("获取EGB的token");
 		logger.info("------获取EGB的token定时器开启---------" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-		System.out.println("------获取EGB的token定时器开启---------" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 		productFetchUtil.queryGebToken();
-		System.out.println("------获取EGB的token定时器结束---------" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 		logger.info("------获取EGB的token定时器结束---------" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 	}
 	@Scheduled(cron = "${getVipTokenJobSchedule}")
 	public void getVipTokenMethod(){
-		System.out.println("获取Vip的token");
 		logger.info("------获取Vip的token定时器开启---------" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-		System.out.println("------获取Vip的token定时器开启---------" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 		productFetchUtil.queryVipToken();
-		System.out.println("------获取Vip的token定时器结束---------" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 		logger.info("------获取Vip的token定时器结束---------" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 	}
 	
