@@ -105,14 +105,7 @@ public class ChannelManageController {
                 String jsonStr = JSONObject.fromObject(scp).toString();
                 String resultJsonStr = HttpUtil45.operateData("post", "json", "http://192.168.3.175:8003/channelManage/addChannel", timeConfig, null, jsonStr, null, null);
             }
-           // String resultJsonStr = HttpUtil45.operateData("post", "json", "http://192.168.3.175:8003/channelManage/addChannel", timeConfig, null, list, null, null);
-            //JSONObject resultJsonObject = JSONObject.fromObject(resultJsonStr);
-           // String reustlMsg = resultJsonObject.getString("content");
-          /* String reustlMsg = "";
-            if("修改成功".equals(reustlMsg)){*/
                 return "success";
-           /* }
-            return "error";*/
         }catch (Exception e){
             return "error";
         }
