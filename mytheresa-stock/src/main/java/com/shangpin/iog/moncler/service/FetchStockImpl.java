@@ -269,7 +269,7 @@ public class FetchStockImpl
         byte[] bytes = { -62, -96 };
         String UTFSpace = new String(bytes, "utf-8");
         price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;", "");
-        
+
         Elements temSizeElements = doc.select("div.product-options").select("div.size-chooser").select("li");
         String a = "Add to Shopping Bag";
         if (temSizeElements.size() == 0)
@@ -284,6 +284,9 @@ public class FetchStockImpl
           SkuDTO skuDTO = (SkuDTO)zhiCaiSkuResultList.get(0);
           String spSizeName = skuDTO.getSize();
           String marketPrice = skuDTO.getMarketPrice();
+          if (StringUtils.isBlank(price)){
+            price=marketPrice;
+          }
           if (marketPrice != null)
           {
             float temElementPrice = Float.parseFloat(price);
@@ -337,7 +340,7 @@ public class FetchStockImpl
 
                 }
                 String spSizeName = skuDTO.getSize();
-                String s=temElementSizeName;
+                String s=temElementSizeName.trim();
                 if (temElementSizeName.contains("DT")) {
                   String replace = temElementSizeName.replace(" ", "");
                   String[] dts = replace.split("DT");
@@ -348,7 +351,16 @@ public class FetchStockImpl
                   String[] dts = replace.split("IT");
                   s = "IT"+dts[0] + " " + dts[1];
                 }
-
+                if (temElementSizeName.contains("FR")) {
+                  String replace = temElementSizeName.replace(" ", "");
+                  String[] dts = replace.split("FR");
+                  s = dts[1];
+                }
+                if (temElementSizeName.contains("EU")) {
+                  String replace = temElementSizeName.replace(" ", "");
+                  String[] dts = replace.split("EU");
+                  s = dts[1];
+                }
                 if (s.equals(spSizeName))
                 {
                   String temQty = "";
@@ -535,11 +547,11 @@ public class FetchStockImpl
   public static void main(String[] args)
   {
     ProductDTO productDTO = new ProductDTO();
-    productDTO.setProductUrl("https://www.mytheresa.com/en-gb/gucci-wool-and-cashmere-sweater-859264.html");
+    productDTO.setProductUrl("https://www.mytheresa.com/en-gb/gucci-dionysus-gg-supreme-small-coated-canvas-shoulder-bag-867476.html");
     List<SkuDTO> zhiCaiSkuResultList = new ArrayList();
     SkuDTO skuDTO = new SkuDTO();
     skuDTO.setSpSkuNo("30968589002");
-    skuDTO.setSize("XS");
+    skuDTO.setSize("34");
     skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
     skuDTO.setMarketPrice("350.0");
     zhiCaiSkuResultList.add(skuDTO);
