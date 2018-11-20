@@ -2,42 +2,43 @@ package com.shangpin.iog.gebnegozio.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 import com.shangpin.iog.gebnegozio.dto.StockDTO;
+import com.shangpin.iog.gebnegozio.dto.SupplierToken;
+import com.shangpin.iog.gebnegozio.dto.TokenResp;
+import com.shangpin.iog.gebnegozio.schedule.Schedule;
 import com.shangpin.iog.gebnegozio.util.HttpClientUtil;
 import com.shangpin.iog.gebnegozio.util.HttpRequestMethedEnum;
+import javafx.scene.chart.PieChart;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by zhaowenjun on 2018/9/12.
  */
 @Component
 public class ProductFetchUtil {
-    public static final String STOCK_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/stockStatuses/";
-    public static final String POST_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token";
     private static Logger logger = Logger.getLogger("info");
     private static ResourceBundle bdl = null;
-    private static String supplierId = "",usr="",pwd="",recordCount="",language="";
+    private static String supplierId = "",tokenUrl="",stockUrl="",postUrl="";
     Gson gson = new Gson();
+
     static {
         if (null == bdl){
             bdl = ResourceBundle.getBundle("conf");
         }
         supplierId = bdl.getString("supplierId");
-
-        usr = bdl.getString("usr");
-        pwd = bdl.getString("pwd");
-        recordCount = bdl.getString("recordCount");
-        language = bdl.getString("language");
-        supplierId = bdl.getString("supplierId");
+        tokenUrl = bdl.getString("tokenUrl");
+        stockUrl = bdl.getString("stockUrl");
+        postUrl = bdl.getString("postUrl");
     }
     ObjectMapper mapper = new ObjectMapper();
     OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
@@ -54,11 +55,13 @@ public class ProductFetchUtil {
         //定义供应商 skuNo （key） Quantita(value) Map集合
         logger.info("===============Collection<String> skuNos size()================"+skuNos.size());
         Map<String, String> spStockMap = new HashMap<>();
-        String data = "";
+        String token = "";
         try {
-
             for (String sku : skuNos) {
-                String token = selToken();
+                SupplierToken supplierToken = queryToken(supplierId);
+                if (null != supplierToken){
+                    token = supplierToken.getAccessToken();
+                }
                 if(null != token && !token.equals("")) {
                     String qty = selStock( sku , token );
                     if( null == qty || qty.equals("") ){
@@ -73,29 +76,6 @@ public class ProductFetchUtil {
         }
         logger.info("成功获取到的map大小  spStockMap.size======"+spStockMap.size());
         return spStockMap;
-    }
-    /**
-     *  获取token
-     */
-    public String selToken(){
-        String token = "";
-        // 存储相关的header值
-        Map<String,String> header = new HashMap<String, String>();
-        header.put("Content-Type", "application/json");
-
-        // 请求正文内容
-        String json = "{\"username\":\"ming.liu@shangpin.com\",\"password\":\"Ex7n4AQ5\"}";
-
-        //返回值是token
-        HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,POST_URL, null, header, json);
-        if(null != response && response.size() > 0 && response.get("code").equals("200") ){
-            token = response.get("resBody");
-            token = token.substring( 1, token.length()-1 );
-        }else {
-            logger.info("获取token异常，正在重新获取"+ response.get("message"));
-            token = selToken();
-        }
-        return token;
     }
     /**
      * 携带token获取内容、get公用方法
@@ -125,11 +105,8 @@ public class ProductFetchUtil {
                     sku = sku.replaceAll("\\\\\\\\","\\\\");
                 }
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
-                String url = STOCK_URL + urlStr;
-                logger.info("sku url = "+url);
-                logger.info("sku = " + sku);
+                String url = stockUrl + urlStr;
                 String stockJson = selMessage(token , url);
-                logger.info("sku url response= "+stockJson);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
                     qty = stockDTO.getStockItem().getQty();
@@ -142,6 +119,38 @@ public class ProductFetchUtil {
             }
         }
         return  qty;
+    }
+
+    /**
+     *  根据 supplierId 查token
+     * @param supplierId
+     * @return
+     */
+    public SupplierToken queryToken(String supplierId){
+        SupplierToken supplierTokenDTO = new SupplierToken();
+        TokenResp tokenResp = new TokenResp();
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("supplierId", supplierId);
+        try {
+            String result = HttpUtil45.operateData("get", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
+                    1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
+            tokenResp = gson.fromJson( result, TokenResp.class);
+            String data = tokenResp.getData();
+            if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
+                if( null != data && !data.equals("") ){
+                    supplierTokenDTO = gson.fromJson(data,SupplierToken.class);
+                }else {
+                    supplierTokenDTO = null;
+                }
+            }else {
+                supplierTokenDTO = null;
+                logger.info("根据 supplierId 查token失败：" + tokenResp.getMessage());
+            }
+        } catch (ServiceException e) {
+            logger.error("根据 supplierId 查token异常：" + e.getMessage());
+            e.printStackTrace();
+        }
+        return supplierTokenDTO;
     }
 }
 
