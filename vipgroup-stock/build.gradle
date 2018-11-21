@@ -1,0 +1,19 @@
+dependencies {
+    compile(
+            project(':iog-common-product'),
+            project(':openapi-ice'),
+            "com.alibaba:fastjson:1.2.23"
+    )
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+jar {
+
+    dependsOn copyToLib , copyResources,dependsClassPath
+    exclude ("**/*.properties")
+
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.vipgroup.stock.schedule.Startup'
+    }
+}

@@ -1,3 +1,4 @@
+
 dependencies {
 
     compile('com.shangpin:openapi-api-sdk:4.7')

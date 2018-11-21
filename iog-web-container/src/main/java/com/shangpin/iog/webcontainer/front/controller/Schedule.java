@@ -148,11 +148,11 @@ public class Schedule {
 									SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, subject,"请查看附件", messageType,file);
 								} catch (Exception e) {
 									e.printStackTrace();
-									log.error(e.toString()); 
+									log.error(e.toString());
 								}
-								
+
 							}
-							
+
 						}
 						
 					} catch (Exception e) {
@@ -161,7 +161,7 @@ public class Schedule {
 					}
 				}else{
 					System.out.println("今天没有价格发生变化的产品");
-					log.info("今天没有价格发生变化的产品"); 
+					log.info("今天没有价格发生变化的产品");
 				}
 				
 			}
@@ -353,10 +353,10 @@ public class Schedule {
 										SendMail.sendGroupMailWithFile(smtpHost, from, fromUserPassword, to, "以下产品季节发生了变化，请查看","以下产品季节发生了变化,请查看附件", messageType,file);
 									} catch (Exception e) {
 										e.toString();
-										log.error(e.toString()); 
+										log.error(e.toString());
 									}
 								}
-								
+
 							}
 							
 						} catch (Exception e) {
@@ -365,7 +365,7 @@ public class Schedule {
 						}
 					}else{
 						System.out.println("今天没有季节发生变化的产品。");
-						log.info("今天没有季节发生变化的产品。"); 
+						log.info("今天没有季节发生变化的产品。");
 					}
 				}			
 			}

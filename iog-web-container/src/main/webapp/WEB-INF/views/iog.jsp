@@ -212,7 +212,14 @@
 		window.open('downloadpicBySupplier?queryJson='+$.toJSON(search), '','');
 		
 	}
-	
+    //跳转到查询hub_filter页面
+    function gotoBrandFilter(){
+        window.open('gotoBrandFilter');
+    }
+    //跳转到查询渠道页面
+    function gotoChannelManage(){
+        window.open('gotoChannelManage');
+    }
 	function tempExport(str){
 		var search = filter(str);
     	if(null != search){
@@ -330,8 +337,13 @@
 		<div
 			style="width:30%; padding-left: 1; margin: 0; float: left; box-sizing: border-box;">
 			<a href="javascript:void(0)" onclick="downloadpicBySupplier()" icon="icon-search" class='easyui-linkbutton'>选择供应商下载图片</a>
-		</div>		
-			
+		</div>
+		<div
+				style="width:30%; padding-left: 1; margin: 0; float: left; box-sizing: border-box;">
+			<a href="javascript:void(0)" onclick="gotoBrandFilter()" icon="icon-search" class='easyui-linkbutton'>EPHUB品牌过滤管理</a>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="javascript:void(0)" onclick="gotoChannelManage()" icon="icon-search" class='easyui-linkbutton'>EPHUB品牌渠道管理</a>
+		</div>
 	</div>
 	<br><br><br>
 	<a href="javascript:void(0)" onclick="OnlineDownLoad()" icon="icon-search" class='easyui-linkbutton' title="按条件导出产品的下载图片,命名为spskuid,失败重试10次">下载图片online</a>
