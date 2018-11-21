@@ -52,9 +52,9 @@ public class FetchStockImpl {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "5";
+    private static  String IN_STOCK;
     //无库存
-    private static final String NO_STOCK = "0";
+    private static  String NO_STOCK;
 
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
@@ -74,7 +74,8 @@ public class FetchStockImpl {
         pageSize = bdl.getString("pageSize");
 
         filePath = bdl.getString("csvFilePath");
-
+        IN_STOCK=bdl.getString("IN_STOCK");
+        NO_STOCK=bdl.getString("NO_STOCK");
         uri = bdl.getString("uri");
 
     }
@@ -96,10 +97,20 @@ public class FetchStockImpl {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "lkbennett-qty-"+todayStr+".csv";
-        String priceFilePath = filePath + "lkbennett-price-"+todayStr+".csv";
+        String temFilePath = filePath + "lkbennett-qty-"+todayStr+"-1.csv";
+        File fristFile = new File(temFilePath);
+        if(fristFile.exists()){
+            temFilePath = filePath + "lkbennett-qty-"+todayStr+"-2.csv";
+        }
+        String priceFilePath = filePath + "lkbennett-price-"+todayStr+"-1.csv";
+        File secondFile = new File(priceFilePath);
+        if(secondFile.exists()){
+            priceFilePath = filePath + "lkbennett-price-"+todayStr+"-2.csv";
+        }
         System.out.println("文件保存目录："+temFilePath);
         logger.info("文件保存目录："+temFilePath);
+        System.out.println("价格文件保存目录："+temFilePath);
+        logger.info("价格文件保存目录："+temFilePath);
         try {
             out = new OutputStreamWriter(new FileOutputStream(temFilePath, true),"gb2312");
             priceOut = new OutputStreamWriter(new FileOutputStream(priceFilePath, true),"gb2312");
@@ -159,7 +170,12 @@ public class FetchStockImpl {
         for (int i = 0; i < failedSpSkuNoSize; i++) {
             repeatSolveFailedSpSkuNo(failedSpSkuNoList.get(i));
         }
-
+        try {
+            out.close();
+            priceOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String endtDateTime = format.format(new Date());
         logger.info("===================拉取lkbennett库存数据结束 "+endtDateTime+"=========================");
         System.out.println("=================拉取lkbennett库存数据结束 "+endtDateTime+"=========================");
@@ -300,6 +316,7 @@ public class FetchStockImpl {
      */
     private static boolean solveProductQty(ProductDTO productDTO) {
         String productUrl = productDTO.getProductUrl();
+        System.out.println(productUrl);
         List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
         int zhiCaiSkuResultListSize = zhiCaiSkuResultList.size();
         try {
@@ -318,84 +335,100 @@ public class FetchStockImpl {
                  *   处理商品 的尺码 以及 库存信息
                  */
                 //判断当前包页面有没有尺码信息  有分成多个 product 没有 尺码为均码
-                Elements sizeElements=doc.select(".variant-section").select(".variant-selector").select("#Size").select("option");
-                if(sizeElements!=null&&sizeElements.size()>0){
-                    int spSkuSize = zhiCaiSkuResultList.size();
-                    int pageSize=sizeElements.size();
-                    for (int j = 0; j <spSkuSize ; j++) {
-                        SkuDTO skuDTO = zhiCaiSkuResultList.get(j);
-                        for (int i = 0; i <pageSize ; i++) {
-                            String sizeText=sizeElements.get(i).text();
-                            if (sizeText.equals("SELECT YOUR SIZE")){
-                                continue;
-                            }
-                            String temQty="";
-                            try {
-                                sizeText=sizeText.replace(" ","").replace("Size ","").replace("Size","").trim();
-                                String sizeValue="";
+                Elements sizeElements = doc.select(".variant-section").select(".variant-selector").select("#Size").select("option");
+                 if(sizeElements!=null&&sizeElements.size()>0){
+                int spSkuSize = zhiCaiSkuResultList.size();
+                int pageSize = sizeElements.size();
+                for (int j = 0; j < spSkuSize; j++) {
+                    SkuDTO skuDTO = zhiCaiSkuResultList.get(j);
+                    /*if (sizeElements==null||sizeElements.size()==0){
+                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
+                        continue;
+                    }*/
+                    for (int i = 0; i < pageSize; i++) {
+                        String sizeText = sizeElements.get(i).text();
+                        if (sizeText.equals("SELECT YOUR SIZE")) {
+                            continue;
+                        }
+                        String temQty = "";
+                        try {
+                            sizeText = sizeText.replace(" ", "").replace("Size ", "").replace("Size", "").trim();
+                            String sizeValue = "";
 
-                                String jdbcSize=skuDTO.getSize();
-                                sizeValue=sizeText.split(",")[0];
-                                if (sizeValue.contains("EU")){
-                                    if (sizeValue.contains("|")){
-                                        sizeValue=sizeText.split(",")[0].split("\\|")[1].trim().replace(" ","");
-                                    }else {
-                                        sizeValue=sizeText.split(",")[0].trim().replace(" ","");
-                                    }
+                            String jdbcSize = skuDTO.getSize();
+                            sizeValue = sizeText.split(",")[0];
+                            if (sizeValue.contains("EU")) {
+                                if (sizeValue.contains("|")) {
+                                    sizeValue = sizeText.split(",")[0].split("\\|")[1].trim().replace(" ", "");
+                                } else {
+                                    sizeValue = sizeText.split(",")[0].trim().replace(" ", "");
                                 }
-                                if(!sizeValue.equals(jdbcSize)){
+                            }
+                            if (!sizeValue.equals(jdbcSize)) {
+                                if (i < pageSize - 1) {
+                                    continue;
+                                } else {
+                                    temQty = NO_STOCK;
+                                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
                                     continue;
                                 }
-                                temQty=sizeText.split(",")[1].replace("  ","").trim();
-                                if (temQty.equals("Out of stock")){
-                                    temQty=NO_STOCK;
-                                }else if (temQty.equals("Low stock")){
-                                    temQty=IN_STOCK;
-                                }else if (temQty.equals("Available")){
-                                    temQty=IN_STOCK;
-                                }else{
-                                    temQty=NO_STOCK;
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                temQty=NO_STOCK;
+
                             }
-                            //价格
-                            String salePrice="";
-                            //
-                            Elements salepriceElements=doc.select(".product-details").select(".price").select("input");
-                            /*Elements priceElements=doc.select(".product-details").select(".price").select("span");
-                            salePrice=salepriceElements.attr("value").replace("£","").replace(",","");
+                            temQty = sizeText.split(",")[1].replace("  ", "").trim();
+                            if (temQty.equals("Out of stock")) {
+                                temQty = NO_STOCK;
+                            } else if (temQty.equals("Low stock")) {
+                                temQty = IN_STOCK;
+                            } else if (temQty.equals("Available")) {
+                                temQty = IN_STOCK;
+                            } else {
+                                temQty = NO_STOCK;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            temQty = NO_STOCK;
+                        }
+                        //价格
+                        String salePrice = "";
+                        //
+                        String price="";
+                        Elements salepriceElements = doc.select(".product-details").select(".price").select("input");
+                        Elements priceElements=doc.select(".product-details").select(".price").select("span");
+                            //salePrice=salepriceElements.attr("value").replace("£","").replace(",","");
                             if (priceElements.size()>0){
                                 price=priceElements.text().replace("£","").replace(",",""
                                 );
                             }else {
                                 price=salePrice;
-                            }*/
-                            if(salepriceElements!=null&&salepriceElements.size()>0){
-                                salePrice=salepriceElements.attr("value").replace("£","").replace(",","");
                             }
-                            byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
-                            String UTFSpace = new String(bytes,"utf-8");
-                            salePrice = salePrice.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","");
-                            String marketPrice = skuDTO.getMarketPrice();
-                            if(marketPrice!=null){
-                                float temElementPrice = Float.parseFloat(salePrice);
-                                float spMarketPrice = Float.parseFloat(marketPrice);
-                                if(temElementPrice!=spMarketPrice){ //价格发生改变
-                                    updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),salePrice);
-                                    exportSpSkunoAndPrice("2018082702041",skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice,productUrl);
-                                    logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+salePrice);
-                                    System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+salePrice);
-                                }
-                            }else{
-                                loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
-                            }
-                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
-                            break;
+                        if (salepriceElements != null && salepriceElements.size() > 0) {
+                            salePrice = salepriceElements.attr("value").replace("£", "").replace(",", "");
                         }
+                        byte bytes[] = {(byte) 0xC2, (byte) 0xA0};
+                        String UTFSpace = new String(bytes, "utf-8");
+                        salePrice = salePrice.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;", "");
+
+                        price=price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;", "");
+                        System.out.println("现售价为："+salePrice+"|折前价为："+price);
+                        String marketPrice = skuDTO.getMarketPrice();
+                        if (marketPrice != null) {
+                            float temElementPrice = Float.parseFloat(salePrice);
+                            float spMarketPrice = Float.parseFloat(marketPrice);
+                            if (temElementPrice != spMarketPrice) { //价格发生改变
+                                updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(), price,salePrice);
+                                exportSpSkunoAndPrice("2018082702041", skuDTO.getSpSkuNo(), spMarketPrice, temElementPrice, productUrl);
+                                logger.info("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + salePrice);
+                                System.out.println("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + salePrice);
+                            }
+                        } else {
+                            loggerError.error("getMarketPrice 为空 ProductDTO:" + productDTO.toString());
+                        }
+                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
+                        break;
                     }
+                }
                 }else{
+
                     logger.error("===请求商品地址解析 商品尺码失败===========================================");
                     logger.error(productDTO.toString());
                     logger.error("===请求商品地址解析 商品尺码失败===========================================");
@@ -425,12 +458,13 @@ public class FetchStockImpl {
      * @param supplierSkuNo
      * @param marketPrice
      */
-    private static void updateSpSkuMarketPrice(String supplierSkuNo, String marketPrice) {
+    private static void updateSpSkuMarketPrice(String supplierSkuNo, String marketPrice,String salePrice) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("supplierId",supplierId);
         jsonObject.put("supplierNo",supplierNo);
         jsonObject.put("supplierSkuNo",supplierSkuNo);
         jsonObject.put("marketPrice",marketPrice);
+        jsonObject.put("salePrice",salePrice);
         String jsonStr = jsonObject.toString();
         System.out.println(" 推送价格入参json:"+jsonStr);
         logger.info(" 推送价格入参json:"+jsonStr);
@@ -545,7 +579,7 @@ public class FetchStockImpl {
             buffer.append(qty).append(splitSign);
             buffer.append("\r\n");
             out.write(buffer.toString());
-            System.out.print("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
+            System.out.println("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
             logger.info("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
             logger.info(buffer.toString());
             out.flush();
@@ -577,8 +611,10 @@ public class FetchStockImpl {
             e.printStackTrace();
         }
     }
-    protected static void sendMail(){
-
+    protected static void sendMail(String filePath){
+        System.out.println("准备发送的文件："+filePath);
+        String time=filePath.split("price-")[1];
+        time=time.split(".csv")[0];
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props);
         Message message = new MimeMessage(session);
@@ -589,9 +625,11 @@ public class FetchStockImpl {
             long dayTime = 1000*3600*24l;
             Date yesterDate = new Date(new Date().getTime() - dayTime);
             String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-            message.setSubject(yesterdayDateStr+"-"+bdl.getString("uri")+"修改了价格的商品信息");
-            message.setFrom(new InternetAddress("xinghua.tian@shangpin.com"));
+            //message.setSubject(yesterdayDateStr+"-"+bdl.getString("uri")+"修改了价格的商品信息");
+            message.setSubject(time+"-"+bdl.getString("uri")+"修改了价格的商品信息");
+            //message.setFrom(new InternetAddress("xinghua.tian@shangpin.com"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress("sophia.huo@shangpin.com"));
+            //message.setRecipient(Message.RecipientType.TO, new InternetAddress("xinghua.tian@shangpin.com"));
             //设置抄送人
             message.setRecipient(Message.RecipientType.CC, new InternetAddress("xinghua.tian@shangpin.com"));
             Multipart multipart = new MimeMultipart();
@@ -604,12 +642,13 @@ public class FetchStockImpl {
             bodyPart = new MimeBodyPart();
 
             //实例化DataSource(来自jaf)，参数为文件的地址
-            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"lkbennett-price-"+yesterdayDateStr+".csv");
+            //DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"lkbennett-price-"+yesterdayDateStr+".csv");
+            DataSource dataSource = new FileDataSource(filePath);
             //使用datasource实例化datahandler
             DataHandler dataHandler = new DataHandler(dataSource);
             bodyPart.setDataHandler(dataHandler);
             //设置附件标题，使用MimeUtility进行名字转码，否则接收到的是乱码
-            bodyPart.setFileName(javax.mail.internet.MimeUtility.encodeText(yesterdayDateStr+"修改了价格的商品信息"+".csv"));
+            bodyPart.setFileName(javax.mail.internet.MimeUtility.encodeText(time+"修改了价格的商品信息"+".csv"));
             multipart.addBodyPart(bodyPart);
             message.setContent(multipart);
             Transport transport = session.getTransport("smtp");
@@ -622,62 +661,74 @@ public class FetchStockImpl {
             e.printStackTrace();
             loggerError.error(" ===================发送邮件失败=========================");
             System.out.println("===================发送邮件失败 =========================");
+            throw new RuntimeException();
         }
     }
-    protected void getFileToEmail(){
+    protected boolean getFileToEmail(){
         long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String fileName=bdl.getString("csvFilePath")+"lkbennett-price-"+yesterdayDateStr+".csv";
-        File file=new File(bdl.getString("csvFilePath")+"lkbennett-price-"+yesterdayDateStr+".csv");
+        String todayStr = simpleDateFormat.format( new Date(new Date().getTime()));
+        String fileName=bdl.getString("csvFilePath")+"lkbennett-price-"+todayStr+"-1.csv";
+        File file=new File(bdl.getString("csvFilePath")+"lkbennett-price-"+todayStr+"-1.csv");
+        if (!(file.exists())){
+            file=new File(bdl.getString("csvFilePath")+"lkbennett-price-"+yesterdayDateStr+"-2.csv");
+            fileName=bdl.getString("csvFilePath")+"lkbennett-price-"+yesterdayDateStr+"-2.csv";
+
+            if (!file.exists()){
+                file=new File(bdl.getString("csvFilePath")+"lkbennett-price-"+yesterdayDateStr+"-1.csv");
+                fileName=bdl.getString("csvFilePath")+"lkbennett-price-"+yesterdayDateStr+"-1.csv";
+            }
+        }
         try {
-            FileInputStream fis = new FileInputStream(file);
-            System.out.println("文件的大小是："+fis.available()+"\n");
-            if (fis.available()>0){
-                sendMail();
+            System.out.println("文件的大小是："+file.length()+"\n");
+            if (file.length()>50){
+                sendMail(fileName);
             }else {
                 deleteFile(fileName);
                 logger.info("===================没有价格改变的商品不需邮箱发送 =========================");
                 System.out.println("===================没有价格改变的商品不需邮箱发送 =========================");
             }
-        } catch (IOException e) {
+            return true;
+        } catch (Exception e) {
             e.printStackTrace();
             loggerError.error(" ===================寻找csv文件失败=========================");
             System.out.println("===================寻找csv文件失败 =========================");
+            return false;
         }
     }
     protected static boolean deleteFile(String fileName) {
+
         File file = new File(fileName);
-        System.gc();
+            System.gc();
         // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
                 System.out.println("删除单个文件" + fileName + "成功！");
+                logger.info("========删除单个文件" + fileName + "成功！===========");
                 return true;
             } else {
                 System.out.println("删除单个文件" + fileName + "失败！");
+                logger.info("========删除单个文件" + fileName + "失败！===========");
                 return false;
             }
         } else {
             System.out.println("删除单个文件失败：" + fileName + "不存在！");
+            logger.info("========删除单个文件失败" + fileName + "不存在！===========");
             return false;
         }
     }
-   /* public static void main(String[] args) {
+    /*public static void main(String[] args) {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://www.lkbennett.com/product/AOANNEPOLYAMIDEMIXMultiNavy%20White~Anne-Blue-Stripe-Swimsuit-Navy%20White");
+        productDTO.setProductUrl("https://www.lkbennett.com/product/CDDAKOTAPOLYESTERPrintAnimal~Dakota-Dress-Animal");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
-        skuDTO.setSpSkuNo("30968589002");
-        skuDTO.setSize("S");
-        skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
-        skuDTO.setMarketPrice("49");
-        *//*SkuDTO skuDTO1=new SkuDTO();
-        skuDTO1.setSpSkuNo("555555");
-        skuDTO1.setSize("M");
-        skuDTO1.setMarketPrice("5355.00");
-        skuDTO1.setSupplierSkuNo("493117 X3I31 91693-53");*//*
+        //skuDTO.setSpSkuNo("30968589002");
+        skuDTO.setSize("4");
+        //skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
+        skuDTO.setMarketPrice("549");
+
         zhiCaiSkuResultList.add(skuDTO);
         //zhiCaiSkuResultList.add(skuDTO1);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
@@ -685,5 +736,8 @@ public class FetchStockImpl {
 
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
     }*/
-
+    public static void main(String[] args) {
+        FetchStockImpl fetchStock = new FetchStockImpl();
+        fetchStock.getFileToEmail();
+    }
 }
