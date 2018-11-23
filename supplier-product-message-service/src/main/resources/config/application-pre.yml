@@ -221,6 +221,11 @@ spring:
                         accuratimeOriginalProduct:
                             destination: accuratime.original.product
                             content-type: application/json
+                              destination: tricot.original.product
+                              content-type: application/json
+                        biniOriginalProduct:
+                              destination: bini.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -425,6 +430,12 @@ spring:
                                   producer:
                                            prefix: HA.
                             vipgroupOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            tricotOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            biniOriginalProduct:
                                   producer:
                                            prefix: HA.
                             suitnegoziOriginalProduct:
