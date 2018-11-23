@@ -221,8 +221,6 @@ spring:
                         accuratimeOriginalProduct:
                             destination: accuratime.original.product
                             content-type: application/json
-                              destination: tricot.original.product
-                              content-type: application/json
                         biniOriginalProduct:
                               destination: bini.original.product
                               content-type: application/json

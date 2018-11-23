@@ -583,4 +583,4 @@ banner:
   charset: UTF-8 # Banner file encoding.
   location: classpath:banner/banner.txt # Banner file location.
   image:
-    location: classpath:banner/yan.png # Banner image file location (jpg/png can also be used).
+    location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
