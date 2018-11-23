@@ -575,8 +575,8 @@ spring:
                                   producer:
                                            prefix: HA.
                             accuratimeOriginalProduct:
-                              producer:
-                                prefix: HA.
+                                  producer:
+                                          prefix: HA.
                             biniOriginalProduct:
                                   producer:
                                           prefix: HA.
