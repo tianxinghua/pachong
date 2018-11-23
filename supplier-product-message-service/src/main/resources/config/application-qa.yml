@@ -269,6 +269,9 @@ spring:
         tricotOriginalProduct:
           destination: tricot.original.product
           content-type: application/json
+        biniOriginalProduct:
+          destination: bini.original.product
+          content-type: application/json
       rabbit:
         bindings:
           fashionTamersOriginalProduct:
@@ -527,6 +530,9 @@ spring:
             producer:
               prefix: HA.
           tricotOriginalProduct:
+            producer:
+              prefix: HA.
+          biniOriginalProduct:
             producer:
               prefix: HA.
   jackson:

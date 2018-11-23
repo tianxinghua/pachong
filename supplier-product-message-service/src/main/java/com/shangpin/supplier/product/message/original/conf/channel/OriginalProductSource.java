@@ -187,6 +187,8 @@ public interface OriginalProductSource {
 
 	public static final String TRICOT = "tricotOriginalProduct";
 
+	public static final String BINI = "biniOriginalProduct";
+
 	/**
      * 供货商fashionTamers通道组件配置
      * @return 供货商fashionTamers通道组件
@@ -742,4 +744,11 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.TRICOT)
 	public MessageChannel tricot();
+
+	/**
+	 * 供货商bini通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.BINI)
+	public MessageChannel bini();
 }

@@ -213,8 +213,11 @@ spring:
                              destination: vipgroup.original.product
                              content-type: application/json
                         tricotOriginalProduct:
-                          destination: tricot.original.product
-                          content-type: application/json
+                              destination: tricot.original.product
+                              content-type: application/json
+                        biniOriginalProduct:
+                              destination: bini.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -422,8 +425,11 @@ spring:
                                   producer:
                                            prefix: HA.
                             tricotOriginalProduct:
-                              producer:
-                                prefix: HA.
+                                  producer:
+                                           prefix: HA.
+                            biniOriginalProduct:
+                                  producer:
+                                           prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 

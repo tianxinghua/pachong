@@ -754,4 +754,13 @@ public class OriginalProductStreamSender {
     public boolean tricotStream(SupplierProduct supplierProduct){
         return originalProductSource.tricot().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+
+    /**
+     * 发送供应商bini商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean biniStream(SupplierProduct supplierProduct){
+        return originalProductSource.bini().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }
