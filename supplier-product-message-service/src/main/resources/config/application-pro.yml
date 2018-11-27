@@ -290,6 +290,9 @@ spring:
                         accuratimeOriginalProduct:
                               destination: accuratime.original.product
                               content-type: application/json
+                        biniOriginalProduct:
+                              destination: bini.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             fashionTamersOriginalProduct:
@@ -572,9 +575,12 @@ spring:
                                   producer:
                                            prefix: HA.
                             accuratimeOriginalProduct:
-                              producer:
-                                prefix: HA.
-  jackson: 
+                                  producer:
+                                          prefix: HA.
+                            biniOriginalProduct:
+                                  producer:
+                                          prefix: HA.
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
        charset: UTF-8 # Banner file encoding.

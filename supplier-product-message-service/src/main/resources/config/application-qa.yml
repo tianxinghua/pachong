@@ -574,6 +574,9 @@ spring:
             accuratimeOriginalProduct:
               producer:
                 prefix: HA.
+            biniOriginalProduct:
+              producer:
+                prefix: HA.
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
 banner:

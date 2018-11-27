@@ -15,7 +15,7 @@ spring:
                         suitnegoziOriginalProduct:
                               destination: suitnegozi.original.product
                               content-type: application/json
-                        ostoreOriginalProduct: 
+                        ostoreOriginalProduct:
                               destination: ostore.original.product
                               content-type: application/json
                         brunarossoOriginalProduct: 
@@ -242,6 +242,9 @@ spring:
                               content-type: application/json
                         accuratimeOriginalProduct:
                               destination: accuratime.original.product
+                              content-type: application/json
+                        biniOriginalProduct:
+                              destination: bini.original.product
                               content-type: application/json
               rabbit:
                       bindings: 
@@ -474,6 +477,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             accuratimeOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            biniOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson:
