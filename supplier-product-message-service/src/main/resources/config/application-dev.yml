@@ -225,6 +225,18 @@ spring:
                         zhicaiOriginalProduct:
                              destination: zhicai.original.product
                              content-type: application/json
+                        nugnesOriginalProduct:
+                             destination: nugnes.original.product
+                             content-type: application/json
+                        mantovaniOriginalProduct:
+                             destination: mantovani.original.product
+                             content-type: application/json
+              rabbit:
+                      bindings:
+                            nugnesOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                             content-type: application/json
                         ilcuccioloOriginalProduct:
                              destination: ilcucciolo.original.product
                              content-type: application/json
@@ -247,8 +259,8 @@ spring:
                               destination: bini.original.product
                               content-type: application/json
               rabbit:
-                      bindings: 
-                            spinnakerOriginalProduct: 
+                      bindings:
+                            spinnakerOriginalProduct:
                                   producer: 
                                            prefix: HA.
                             suitnegoziOriginalProduct:
@@ -342,9 +354,9 @@ spring:
                                   producer: 
                                            prefix: HA.
                             vietti2OriginalProduct:
-                                  producer:
-                                           prefix: HA.
-                            anielloOriginalProduct:
+                              producer:
+                                prefix: HA.
+                            anielloOriginalProduct: 
                                   producer: 
                                            prefix: HA. 
                             lindelepalaisOriginalProduct: 
@@ -461,6 +473,9 @@ spring:
                             zhicaiOriginalProduct:
                                   producer:
                                            prefix: HA.
+                            mantovaniOriginalProduct:
+                                  producer:
+                                           prefix: HA.
                             ilcuccioloOriginalProduct:
                                   producer:
                                            prefix: HA.
@@ -482,7 +497,7 @@ spring:
                             biniOriginalProduct:
                                   producer:
                                            prefix: HA.
-  jackson:
+  jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
        charset: UTF-8 # Banner file encoding.

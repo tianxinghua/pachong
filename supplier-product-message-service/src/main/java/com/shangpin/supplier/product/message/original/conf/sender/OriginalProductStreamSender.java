@@ -752,6 +752,14 @@ public class OriginalProductStreamSender {
         return originalProductSource.suitnegozi().send(MessageBuilder.withPayload(supplierProduct).build());
     }
 
+    public boolean nugnesStream(SupplierProduct supplierProduct) {
+        return originalProductSource.nugnes().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
+    public boolean mantovaniStream(SupplierProduct supplierProduct) {
+        return originalProductSource.mantovani().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
     /**
      * 发送供应商tricot商品流数据
      * @param supplierProduct 消息体

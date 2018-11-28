@@ -190,7 +190,12 @@ public interface OriginalProductSource {
 
 	public static final String BINI = "biniOriginalProduct";
 
-	/**
+
+
+    public static final String NUGNES = "nugnesOriginalProduct";
+
+    public static final String MANTOVANI = "mantovaniOriginalProduct";
+    /**
      * 供货商fashionTamers通道组件配置
      * @return 供货商fashionTamers通道组件
      */
@@ -764,4 +769,10 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.BINI)
 	public MessageChannel bini();
+    @Output(value = OriginalProductSource.NUGNES)
+    public MessageChannel nugnes();
+
+    @Output(value = OriginalProductSource.MANTOVANI)
+    public MessageChannel mantovani();
+
 }
