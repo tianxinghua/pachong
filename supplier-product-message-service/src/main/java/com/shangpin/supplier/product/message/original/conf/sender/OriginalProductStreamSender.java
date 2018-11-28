@@ -716,4 +716,12 @@ public class OriginalProductStreamSender {
     public boolean suitnegoziStream(SupplierProduct supplierProduct) {
         return originalProductSource.suitnegozi().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+
+    public boolean nugnesStream(SupplierProduct supplierProduct) {
+        return originalProductSource.nugnes().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
+    public boolean mantovaniStream(SupplierProduct supplierProduct) {
+        return originalProductSource.mantovani().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }

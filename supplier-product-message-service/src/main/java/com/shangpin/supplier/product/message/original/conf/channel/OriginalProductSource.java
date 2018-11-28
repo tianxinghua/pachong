@@ -175,6 +175,10 @@ public interface OriginalProductSource {
 	public static final String MAX1980 ="max1980OriginalProduct";
 
     public static final String VIETTI2 = "vietti2OriginalProduct";
+
+    public static final String NUGNES = "nugnesOriginalProduct";
+
+    public static final String MANTOVANI = "mantovaniOriginalProduct";
     /**
      * 供货商fashionTamers通道组件配置
      * @return 供货商fashionTamers通道组件
@@ -697,5 +701,11 @@ public interface OriginalProductSource {
 
     @Output(value = OriginalProductSource.SUITNEGOZI)
     public MessageChannel suitnegozi();
+
+    @Output(value = OriginalProductSource.NUGNES)
+    public MessageChannel nugnes();
+
+    @Output(value = OriginalProductSource.MANTOVANI)
+    public MessageChannel mantovani();
 
 }

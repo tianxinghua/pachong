@@ -8,8 +8,14 @@ spring:
   cloud: 
         stream: 
               bindings:
+                        mantovaniOriginalProduct:
+                              destination: mantovani.original.product
+                              content-type: application/json
                         suitnegoziOriginalProduct:
                               destination: suitnegozi.original.product
+                              content-type: application/json
+                        nugnesOriginalProduct:
+                              destination: nugnes.original.product
                               content-type: application/json
                         cocoroseLondonOriginalProduct:
                               destination: cocoroseLondon.original.product
@@ -536,6 +542,12 @@ spring:
                                   producer:
                                            prefix: HA.
                             suitnegoziOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            nugnesOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            mantovaniOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
