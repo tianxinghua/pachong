@@ -195,6 +195,7 @@ public interface OriginalProductSource {
     public static final String NUGNES = "nugnesOriginalProduct";
 
     public static final String MANTOVANI = "mantovaniOriginalProduct";
+    public static final String MACONDO = "macondoOriginalProduct";
     /**
      * 供货商fashionTamers通道组件配置
      * @return 供货商fashionTamers通道组件
@@ -774,5 +775,9 @@ public interface OriginalProductSource {
 
     @Output(value = OriginalProductSource.MANTOVANI)
     public MessageChannel mantovani();
+
+    @Output(value = OriginalProductSource.MACONDO)
+    public MessageChannel macondo();
+
 
 }

@@ -8,7 +8,10 @@ spring:
            virtual-host: /scm-message-service
   cloud: 
         stream: 
-              bindings: 
+              bindings:
+                        macondoOriginalProduct:
+                              destination: macondo.original.product
+                              content-type: application/json
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               content-type: application/json
@@ -495,6 +498,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             biniOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            macondoOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 

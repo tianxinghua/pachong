@@ -785,4 +785,8 @@ public class OriginalProductStreamSender {
     public boolean biniStream(SupplierProduct supplierProduct){
         return originalProductSource.bini().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+
+    public boolean macondoStream(SupplierProduct supplierProduct){
+        return originalProductSource.macondo().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }

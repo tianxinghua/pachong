@@ -8,6 +8,9 @@ spring:
   cloud: 
         stream: 
               bindings:
+                        macondoOriginalProduct:
+                              destination: macondo.original.product
+                              content-type: application/json
                         mantovaniOriginalProduct:
                               destination: mantovani.original.product
                               content-type: application/json
@@ -592,6 +595,9 @@ spring:
                             mantovaniOriginalProduct:
                                   producer:
                                           prefix: HA.
+                            macondoOriginalProduct:
+                                  producer:
+                                           prefix: HA.
   jackson:
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
