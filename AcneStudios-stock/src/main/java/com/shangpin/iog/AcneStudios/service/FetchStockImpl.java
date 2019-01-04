@@ -371,7 +371,7 @@ public class FetchStockImpl {
                         String temQty = "";
                         String sizeStock="";
                         try {
-                            if (sizeText.contains("Out")){
+                            if (sizeText.contains("Out")||sizeText.contains("Sold out")){
                                 String[] strs;
                                 strs=sizeText.split("    ");
                                 sizeText=strs[0];
@@ -382,11 +382,11 @@ public class FetchStockImpl {
                             if (!sizeText.equals(jdbcSize)) {
                                 if (i < pageSize - 1) {
                                     continue;
-                                } else {
-                                    temQty = NO_STOCK;
-                                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
-                                    continue;
-                                }
+                                    } else {
+                                        temQty = NO_STOCK;
+                                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
+                                        continue;
+                                    }
 
                             }
                             if (sizeStock.equalsIgnoreCase("Sold Out")){
@@ -704,19 +704,29 @@ public class FetchStockImpl {
         }
     }
     public static void main(String[] args) {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://www.acnestudios.com/uk/en/canada-new/271176-990.html");
+        /*String url="http://images.selfridges.com/is/image//selfridges/168-82052654-GENNYAW18_ICE_ALT10?$PDP_M_ZOOM$";
+        try {
+            Header header = new Header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
+            Header[] headers = new Header[1];
+            headers[0] = header q
+            HttpResponse ColorResponse=HttpUtils.get(url,headers);
+            System.out.println(ColorResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+      /*  ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductUrl("https://www.acnestudios.com/uk/en/sofiane-mesh/2ET176-8I0.html");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
-        //skuDTO.setSpSkuNo("30968589002");
-        skuDTO.setSize("U");
+        skuDTO.setSpSkuNo("31082483003");
+        skuDTO.setSize("44");
         //skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
-        skuDTO.setMarketPrice("140");
+        skuDTO.setMarketPrice("400");
 
         zhiCaiSkuResultList.add(skuDTO);
         //zhiCaiSkuResultList.add(skuDTO1);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
-        solveProductQty(productDTO);
+        solveProductQty(productDTO);*/
 
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
     }

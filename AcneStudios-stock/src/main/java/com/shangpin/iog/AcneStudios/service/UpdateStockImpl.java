@@ -109,7 +109,7 @@ public class UpdateStockImpl extends FetchStockImpl {
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"lkbennett-qty-"+ yesterdayDateStr+".csv";
+        String csvFilePath = filePath +"AcneStudios-qty-"+ yesterdayDateStr+".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,",");
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){

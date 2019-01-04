@@ -650,19 +650,19 @@ public class FetchStockImpl {
             return false;
         }
     }
-   /* public static void main(String[] args) {
+    public static void main(String[] args) {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductUrl("https://fr.maje.com/fr/nouveautes/categories/pret-a-porter/ravira/H18RAVIRA.html?dwvar_H18RAVIRA_color=0102");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
         skuDTO.setSize("2");
-        skuDTO.setMarketPrice("274");
+        skuDTO.setMarketPrice("99999");
 
         zhiCaiSkuResultList.add(skuDTO);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
         solveProductQty(productDTO);
 
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
-    }*/
+    }
 
 }

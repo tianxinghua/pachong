@@ -96,6 +96,10 @@ public class StockImp  extends AbsUpdateProductStock {
 		}else{
 			List<AtelierSku> skuLists = new ArrayList<AtelierSku>();
 			String[] skuStrings = skuData.split("\\r\\n");
+			for (String s:skuStrings
+				 ) {
+				System.out.println(s);
+			}
 			for (int i = 1; i < skuStrings.length; i++) {
 				try {
 					if (StringUtils.isNotBlank(skuStrings[i])) {
@@ -106,6 +110,7 @@ public class StockImp  extends AbsUpdateProductStock {
 						  data = skuStrings[i];
 						}
 						String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+						logger.info(skuArr.length+"信息:"+skuArr.toString());
 						AtelierSku atelierSku = new AtelierSku();
 						atelierSku.setSpuId(skuArr[0]);
 						atelierSku.setSize(skuArr[1]);
@@ -186,6 +191,8 @@ public class StockImp  extends AbsUpdateProductStock {
 
     public static void main(String[] args) {
     	//加载spring
-        loadSpringContext();       
+        //loadSpringContext();
+		StockImp s =new StockImp();
+		s.handleSkuData();
     }
 }

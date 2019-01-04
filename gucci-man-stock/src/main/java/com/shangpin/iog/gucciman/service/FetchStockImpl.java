@@ -75,7 +75,7 @@ public class FetchStockImpl {
 
         supplierNo = bdl.getString("supplierNo");
 
-        fetchSpProductInfosUrl = bdl.getString("fetchSpProductInfosUrl");
+        `fetchSpProductInfosUrl = bdl.getString("fetchSpProductInfosUrl");
 
         updateSpMarketPriceUrl = bdl.getString("updateSpMarketPriceUrl");
 

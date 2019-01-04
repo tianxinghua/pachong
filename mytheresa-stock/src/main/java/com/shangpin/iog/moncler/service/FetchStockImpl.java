@@ -547,14 +547,20 @@ public class FetchStockImpl
   public static void main(String[] args)
   {
     ProductDTO productDTO = new ProductDTO();
-    productDTO.setProductUrl("https://www.mytheresa.com/en-gb/gucci-dionysus-gg-supreme-small-coated-canvas-shoulder-bag-867476.html");
+    productDTO.setProductUrl("https://www.mytheresa.com/en-gb/balenciaga-everyday-leather-crossbody-bag-963927.html");
     List<SkuDTO> zhiCaiSkuResultList = new ArrayList();
     SkuDTO skuDTO = new SkuDTO();
-    skuDTO.setSpSkuNo("30968589002");
-    skuDTO.setSize("34");
-    skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
-    skuDTO.setMarketPrice("350.0");
+    skuDTO.setSpSkuNo("31159460001");
+    skuDTO.setSize("U");
+    skuDTO.setSupplierSkuNo("P00316117-U");
+    skuDTO.setMarketPrice("478");
     zhiCaiSkuResultList.add(skuDTO);
+    /*SkuDTO skuDTO2 = new SkuDTO();
+    skuDTO2.setSpSkuNo("31220915006");
+    skuDTO2.setSize("38");
+    skuDTO2.setSupplierSkuNo("P00303918Vinaccia-38");
+    skuDTO2.setMarketPrice("478");
+    zhiCaiSkuResultList.add(skuDTO2);*/
     productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
     solveProductQty(productDTO);
   }

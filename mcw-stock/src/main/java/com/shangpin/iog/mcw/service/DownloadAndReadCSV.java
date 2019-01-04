@@ -46,6 +46,7 @@ public class DownloadAndReadCSV {
      */
 
     public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) throws Exception {
+<<<<<<< Updated upstream
 		System.out.println("开始现在文件");
 		boolean b = false;
 		try {
@@ -71,6 +72,8 @@ public class DownloadAndReadCSV {
 		}
 		String buffer = "";
 		String fileName = "/usr/local/appstock/aa.xls";
+=======
+>>>>>>> Stashed changes
 
 
 		File file = new File(fileName);
