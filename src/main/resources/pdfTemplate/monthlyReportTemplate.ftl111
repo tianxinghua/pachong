@@ -1,0 +1,7 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://airshop.shangpin.com/bootstrap/css/bootstrap.min.css"></link>
+    <link rel="stylesheet" href="https://airshop.shangpin.com/dist/css/AdminLTE.css"></link>
+</head>
+%s
+</html>

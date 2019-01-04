@@ -1,0 +1,2259 @@
+<!DOCTYPE html> 
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AirShop | Order Process</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        name="viewport">
+    <!-- Bootstrap 3.3.5 -->
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/font-awesome/font-awesome.min.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker-bs3.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="/plugins/datatables/dataTables.bootstrap.css">
+    <!--<!-- Ionicons -->
+    <link rel="stylesheet" href="/ionicons/ionicons.min.css">
+    <!-- Bootstrap datepicker Picker -->
+    <link rel="stylesheet" href="/plugins/bootstrap-datepicker/datepicker-custom.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/dist/css/AdminLTE.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+    <!-- <link rel="stylesheet" href="/dist/css/skins/_all-skins.min.css">-->
+    <link rel="stylesheet" href="/dist/css/skins/skin-newblack.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="/airshop/index.shtml" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><img src="/dist/img/logo_icon.png" alt="AirShop"></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><img src="/dist/img/logo.png" alt="AirShop"></span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <h4 class="navbar-title"  style="width:200px"  id="SupplierName"></h4>
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- User Sign out Button -->
+          <li class="user user-menu">
+            <a href="javascript:;" title="Sign out" onClick="logOut()">
+              <!--<img src="/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">-->
+              &nbsp;&nbsp;
+              <i class="fa fa-sign-out" style="font-size:16px;"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+        <!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu">
+        <!--<li class="header">Sign In</li>-->
+        
+        <li class="treeview active">
+          <a href="#">
+            <i class="fa fa-fw fa-file-text-o"></i> <span>Order Management</span>
+            <i class="fa fa-angle-left pull-right"></i>
+          </a>
+          <ul class="treeview-menu">
+            <li class="active"><a href="/order/orderprocess.html"><b style="color:White">Order Process</b></a></li>
+            <li ><a href="/order/returnprocess.html"> Return Process</a></li>
+            <li ><a href="/order/statement.html"> Statements</a></li>
+            
+            <!---<li><a href="lockscreen.html"><i class="fa fa-circle-o"></i> Received</a></li>
+            <li><a href="404.html"><i class="fa fa-circle-o"></i> Canceled</a></li>
+            <li><a href="500.html"><i class="fa fa-circle-o"></i> Out of Stock</a></li>
+            <li><a href="blank.html"><i class="fa fa-circle-o"></i> Sales Summary</a></li>
+            <li><a href="pace.html"><i class="fa fa-circle-o"></i> Monthly Report</a></li>---->
+           </ul>
+        </li>
+		<!--product-start-->
+		<li>
+          <a href="#">
+            <i class="fa fa-edit"></i> <span>Product Information</span> <i class="fa fa-angle-left pull-right"></i>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="/product/newProduct.html">New Product</a></li>
+            <li><a href="/product/productsUpload.html"> Products Upload</a></li>
+            <li><a href="/product/productsManagement.html"> Products Management</a></li>
+          </ul>
+        </li>
+		<!--product-end-->
+        <li >
+          <a href="javascript:;">
+            <i class="fa fa-fw fa-cube"></i> <span>Stock Control</span>
+            <i class="fa fa-angle-left pull-right"></i>
+          </a>
+          <ul class="treeview-menu">
+            <li >
+                <a href="/order/stock.html" >Stock Correction</a>
+           </li> 
+          </ul>    
+        </li>
+        <li>
+           <a href="#">
+                    <i class="fa fa-line-chart"></i> <span>Data Analysis</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <li><a href="/report/saleSummary.html">Sale Summary</a></li>
+                        <li><a href="/report/monthlyReport.html">Monthly Report</a></li>
+                    </li>
+                </ul>     
+        </li>
+        <li>
+           <a href="javascript:;">
+            <i class="fa fa-question-circle active"></i><span>Help</span>
+            <i class="fa fa-angle-left pull-right"></i>
+           </a>
+           <ul class="treeview-menu">
+            <li><a href="/help.html">Introduction</a></li>
+            <li><a href="/download.html">Download Guide</a></li>
+           </ul>
+        </li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Order Process
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Order Process</li>
+      </ol>
+    </section>
+	<!-- Main content -->
+	<section class="content">
+      
+      <div class="box box-primary">
+        <!-- form1 start -->
+        <form class="form-horizontal">
+          <div class="box-body">
+            <div class="col-sm-1 col-sm-in" style="display:none;" id="TrackingNumberDiv">
+              <label for="inputNumber" class="col-sm-5 control-label" style="padding-left:0;">Tracking Number</label>
+              <div class="col-sm-7">
+                <input type="text" class="form-control" id="inputTrackingNumber" placeholder="">
+              </div>
+            </div>
+            <div class="col-sm-1 col-sm-in" id="supplierSkuDiv">
+              <label for="inputSKU" class="col-sm-4 control-label" style="padding-left:0;">Supplier SKU</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputSKU" placeholder="">
+              </div>
+            </div>
+            <div class="col-sm-1 col-sm-in" id="itemCodeDiv">
+              <label for="inputItem" class="col-sm-4 control-label" style="padding-left:0;">Item Code</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputItemCode" placeholder="">
+              </div>
+            </div>
+            <div class="col-sm-1 col-sm-in" id="orderCodeDiv">
+              <label for="inputOrder" class="col-sm-4 control-label" style="padding-left:0;">Order Code</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="inputOrder" placeholder="">
+              </div>
+            </div>
+            <!--<div class="col-sm-1 col-sm-in no-padding">
+              <label class="col-sm-4 control-label" style="padding-left:0;">Date range:</label>
+                <div class="col-sm-8 input-group">
+                  <input type="text" class="form-control pull-right" id="reservation">
+                 <label class="input-group-addon" style="cursor:pointer;" for="reservation">
+                  <i class="fa fa-calendar"></i>
+                </label>
+                </div>
+              </div>-->
+             <!--<div class="col-sm-1 col-sm-in" id="resendDiv" style="display:none">
+              <label for="inputResend" class="col-sm-5 control-label" style="padding-left:0;">Product Resend</label>
+              <div class="col-sm-6">
+                <select class="form-control" id="selectResend">
+                    <option value="1_4">All</option>
+                    <option value="4">Yes</option>
+                    <option value="1">No</option>
+                </select>
+              </div>
+            </div>-->
+            <div class="col-sm-1 col-sm-in">
+              <label class="col-sm-4 control-label" style="padding-left:0;">Start</label>
+              <div class="col-sm-8 input-group" data-date-viewmode="days" data-date-format="mm-dd-yyyy" data-date="01-13-2016">
+                <input type="text" class="form-control pull-right" readonly="readonly" id="inputDate1"  name="inputDate1"/>
+                <label class="input-group-addon" style="cursor:pointer;" for="inputDate1">
+                  <i class="fa fa-calendar"></i>
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-1 col-sm-in">
+                <label class="col-sm-4 control-label" style="padding-left:0;">End</label>             
+                <div class="col-sm-8 input-group" style="padding-left:15px;" data-date-minviewmode="days"  data-date-format="mm-dd-yyyy" data-date="01-16-2016">
+                <input type="text" class="form-control pull-right" readonly="readonly" id="inputDate2" name="inputDate2"/>
+                <label class="input-group-addon" style="cursor:pointer;" for="inputDate2">
+                    <i class="fa fa-calendar"></i>
+                </label>
+            </div>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="col-sm-1 col-sm-in" id="resendDiv" style="display:none">
+              <label for="inputResend" class="col-sm-5 control-label" style="padding-left:0;">Product Resend</label>
+              <div class="col-sm-6">
+                <select class="form-control" id="selectResend">
+                    <option value="1_4">All</option>
+                    <option value="4">Yes</option>
+                    <option value="1">No</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+            <button type="reset" class="btn btn-primary pull-right" style="margin-left:10px;">Clear</button>
+            <button type="button" class="btn btn-primary pull-right" onClick="searchData()">Search</button>
+          </div>
+          <!-- /.box-footer -->
+        </form>
+        
+      </div>
+      
+      <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs" id="tabletabList">
+              <li class="active" onClick="loadData(1)"><a href="#step1" data-toggle="tab">Step 1:<br /><b>Check Stock</b></a><input type="hidden" id="step1Status" value="1"/></li>
+              <li onClick="loadData(2)"><a href="#step2" data-toggle="tab">Step 2:<br /><b>Send Parcel</b></a><input type="hidden" id="step2Status" value="1"/></li>
+              <li onClick="loadData(3)"><a href="#step3" data-toggle="tab">Step 3:<br /><b>Parcel In Transit</b></a><input type="hidden" id="step3Status" value="1"/></li>
+              <li onClick="loadData(4)"><a href="#history1" data-toggle="tab">History 1:<br /><b>Received</b></a><input type="hidden" id="step4Status" value="1"/></li>
+              <li onClick="loadData(5)"><a href="#history2" data-toggle="tab">History 2:<br /><b>Canceled</b></a><input type="hidden" id="step5Status" value="1"/></li>
+              <li onClick="loadData(6)"><a href="#history3" data-toggle="tab">History 3:<br /><b>Out Of Stock</b></a><input type="hidden" id="step6Status" value="1"/></li>
+            </ul>
+            <input type="hidden" id="funcType" value="1"/>
+            <div class="tab-content" id="tableContentList">
+                
+              <div class="tab-pane active" id="step1">
+                <div class="col-sm-12 no-padding table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <caption class="caption" style="margin-left:8px;">
+				          <label>
+				            <input type="checkbox" class="group-checkable" data-set="#example1 .checkboxes" onClick="javascript:checkAll('steptable1',this.checked)"> Select All / Unselect All
+			              </label>
+				          &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa airIcon airIcon_Bulk" onClick="purchaseAddListShow()"></i>
+				          <span class="box-tools"><form enctype="multipart/form-data" id="stockFileForm" action="/api/airshop/purchase/inventoryImport" style="display:none;"> <input type="file" name="uploadfile" id="stockFile" /></form><a href="javascript:upstockFile();"><i class="fa airIcon airIcon_Import" title="Import Stock Checked List"></i>Import</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:step1Export();"><i class="fa airIcon airIcon_Export"></i>Export</a></span>
+				          <input type="hidden" id="hidStep1Export" value="0" />
+                        </caption>
+                        <thead>
+                            <tr>
+                              <th> </th>
+                              <th>Image </th>
+                              <th>Brand</th>
+                              <th>Order Code</th>
+                              <th>Supplier SKU</th>
+                              <th>Item Code</th>
+                              <th width="10%">Item Name</th>
+                              <th>Size</th>
+                              <th>Price</th>
+                              <th>Shangpin Code</th>
+                              <th>Date</th>
+                              <th>Qty</th>
+                              <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="steptable1" ></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="steppage1Showing"></div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="dataTables_paginate paging_simple_numbers" id="steppage1"></div>
+                    </div>
+                </div>
+                <div class="row icon_box">
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_Check"></i> Check Stock</div>
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_With"></i> With Stock</div>
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_WithOut"></i> Without Stock</div>
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_Add"></i> Add to Send Parcel List</div>
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_Bulk"></i> Bulk Proceed to Next Step</div>
+			    </div>
+              </div>
+              <div class="tab-pane" id="step2">
+                  <div class="col-sm-12 no-padding table-responsive">
+                       <table class="table table-bordered table-striped">
+                        <caption class="caption" style="margin-left:8px;">
+				          <label>
+				            <input type="checkbox" class="group-checkable" id="cheAllStep2" data-set="#example2 .checkboxes" onClick="javascript:checkAll('steptable2',this.checked);"/> Select All / Unselect All
+			              </label>
+				          &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa airIcon airIcon_Bulk" onClick="purchaseAddDeliveryOrderShow()"></i>&nbsp;&nbsp;<i style="display:none;" class="fa airIcon airIcon_Add" onClick="purchaseAddDeliveryOrderShowTemp()"></i>
+				          <span class="box-tools">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:step2Export();"><i class="fa airIcon airIcon_Export"></i>Export</a></span>
+                          <input type="hidden" id="hidStep2Export" value="0" />
+				        </caption>
+                        <thead>
+                            <tr>
+                              <th> </th>
+                                <th>Image </th>
+                              <th>Brand</th>
+                              <th>Order Code</th>
+                              <th>Supplier SKU</th>
+                              <th>Item Code</th>
+                              <th width="10%">Item Name</th>
+                              <th>Size</th>
+                              <th>Price</th>
+                              <th>Shangpin Code</th>
+                              <th>Date</th>
+                              <th>Product Resend</th>
+                              <th>Qty</th>
+                              <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="steptable2"></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="steppage2Showing"></div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="dataTables_paginate paging_simple_numbers" id="steppage2"></div>
+                    </div>
+                </div>
+                <div class="row icon_box">
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_Check"></i> Check Stock</div>
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_With"></i> With Stock</div>
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_WithOut"></i> Without Stock</div>
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_Add"></i> Add to Send Parcel List</div>
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_Bulk"></i> Bulk Proceed to Next Step</div>
+			    </div>
+              </div>
+              <div class="tab-pane" id="step3">
+                <!-- The timeline -->
+                <div class="col-sm-12 no-padding table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                              <th>Shipping Number</th>
+                              <th>Tracking Number</th>
+                              <th>Qty</th>
+                              <th>Date</th>
+                              <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="steptable3"></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <div class="col-sm-5">
+                        <div class="dataTables_info" id="steppage3Showing"></div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="dataTables_paginate paging_simple_numbers" id="steppage3"></div>
+                    </div>
+                </div>
+                <div class="row icon_box">
+				    <div class="col-md-2 col-sm-icon"><i class="fa airIcon airIcon_Transport"></i> Transport</div>
+			    </div>
+              </div>
+              <div class="tab-pane" id="history1">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                          <th>Brand</th>
+                          <th>Order Code</th>
+                          <th>Supplier SKU</th>
+                          <th>Item Code</th>
+                          <th width="10%">Item Name</th>
+                          <th>Send</th>
+                          <th>Received</th>
+                          <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historytable1"></tbody>
+                    <tfoot></tfoot>
+                </table>
+                <div class="col-sm-5">
+                    <div class="dataTables_info" id="historypage1Showing"></div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="dataTables_paginate paging_simple_numbers" id="historypage1"></div>
+                </div>
+              </div>
+              <div class="tab-pane" id="history2">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                          <th>Brand</th>
+                          <th>Order Code</th>
+                          <th>Supplier SKU</th>
+                          <th>Item Code</th>
+                          <th width="10%">Item Name</th>
+                          <th>Place Date</th>
+                          <th>Canceled</th>
+                          <th>Qty</th>
+                          <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historytable2"></tbody>
+                    <tfoot></tfoot>
+                </table>
+                <div class="col-sm-5">
+                    <div class="dataTables_info" id="historypage2Showing"></div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="dataTables_paginate paging_simple_numbers" id="historypage2"></div>
+                </div>
+                <div class="row icon_box">
+				    <div class="col-md-8"><i class="fa airIcon airIcon_NoStock"></i> Cancel Orders - Other Reasons</div>
+			    </div>
+              </div>
+              <div class="tab-pane" id="history3">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                          <th>Brand</th>
+                          <th>Order Code</th>
+                          <th>Supplier SKU</th>
+                          <th>Item Code</th>
+                          <th width="10%">Item Name</th>
+                          <th>Date</th>
+                          <th>Out Of Stock</th>
+                          <th>Qty</th>
+                          <th>Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historytable3"></tbody>
+                    <tfoot></tfoot>
+                </table>
+                <div class="col-sm-5">
+                    <div class="dataTables_info" id="historypage3Showing"></div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="dataTables_paginate paging_simple_numbers" id="historypage3"></div>
+                </div>
+                <div class="row icon_box">
+				    <div class="col-md-3"><i class="fa airIcon airIcon_Canceled"></i> Cancel Orders - No Stock</div>
+			    </div>
+              </div>
+
+              <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+
+    </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <footer class="main-footer">
+    <strong>Copyright &copy; 2016 <a href="http://www.shangpin.com" target="_blank">shangpin.com</a></strong> All rights
+    reserved.
+  </footer>
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+    <!-- Create the tabs -->
+    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+      <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+      <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <!-- Home tab content -->
+      <div class="tab-pane" id="control-sidebar-home-tab">
+        <h3 class="control-sidebar-heading">Recent Activity</h3>
+        <ul class="control-sidebar-menu">
+          <li>
+            <a href="javascript::;">
+              <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+
+                <p>Will be 23 on April 24th</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript::;">
+              <i class="menu-icon fa fa-user bg-yellow"></i>
+
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+
+                <p>New phone +1(800)555-1234</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript::;">
+              <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+
+                <p>nora@example.com</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript::;">
+              <i class="menu-icon fa fa-file-code-o bg-green"></i>
+
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+
+                <p>Execution time 5 seconds</p>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- /.control-sidebar-menu -->
+
+        <h3 class="control-sidebar-heading">Tasks Progress</h3>
+        <ul class="control-sidebar-menu">
+          <li>
+            <a href="javascript::;">
+              <h4 class="control-sidebar-subheading">
+                Custom Template Design
+                <span class="label label-danger pull-right">70%</span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript::;">
+              <h4 class="control-sidebar-subheading">
+                Update Resume
+                <span class="label label-success pull-right">95%</span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript::;">
+              <h4 class="control-sidebar-subheading">
+                Laravel Integration
+                <span class="label label-warning pull-right">50%</span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript::;">
+              <h4 class="control-sidebar-subheading">
+                Back End Framework
+                <span class="label label-primary pull-right">68%</span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- /.control-sidebar-menu -->
+
+      </div>
+      <!-- /.tab-pane -->
+      <!-- Stats tab content -->
+      <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+      <!-- /.tab-pane -->
+      <!-- Settings tab content -->
+      <div class="tab-pane" id="control-sidebar-settings-tab">
+        <form method="post">
+          <h3 class="control-sidebar-heading">General Settings</h3>
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Report panel usage
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+
+            <p>
+              Some information about this general settings option
+            </p>
+          </div>
+          <!-- /.form-group -->
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Allow mail redirect
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+
+            <p>
+              Other sets of options are available
+            </p>
+          </div>
+          <!-- /.form-group -->
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Expose author name in posts
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+
+            <p>
+              Allow the user to show his name in blog posts
+            </p>
+          </div>
+          <!-- /.form-group -->
+
+          <h3 class="control-sidebar-heading">Chat Settings</h3>
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Show me as online
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+          </div>
+          <!-- /.form-group -->
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Turn off notifications
+              <input type="checkbox" class="pull-right">
+            </label>
+          </div>
+          <!-- /.form-group -->
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Delete chat history
+              <a href="javascript::;" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
+            </label>
+          </div>
+          <!-- /.form-group -->
+        </form>
+      </div>
+      <!-- /.tab-pane -->
+    </div>
+  </aside>
+        <!-- /.control-sidebar -->
+        <!-- Add the sidebar's background. This div must be placed
+       immediately after the control sidebar -->
+        <div class="control-sidebar-bg">
+        </div>
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery 2.1.4 -->
+    <script src="/plugins/jQuery/jQuery-2.1.4.min.js" type="text/jscript"></script>
+    <script src="/bootstrap/js/bootstrap.min.js" type="text/jscript"></script>
+    <!--<script src="/dist/js/moment.min.js" type="text/javascript"></script>-->
+    <!--<script src="/plugins/daterangepicker/daterangepicker.js"></script>-->
+    <script src="/plugins/slimScroll/jquery.slimscroll.min.js" type="text/jscript"></script>
+    <script src="/plugins/fastclick/fastclick.js" type="text/jscript"></script>
+    <script src="/dist/js/app.min.js" type="text/jscript"></script>
+    <script src="/dist/js/demo.js" type="text/jscript"></script>
+    <script type="text/javascript" src="/bootstrap/js/jquery.utils.min.js" ></script>
+    <script type="text/javascript" src="/bootstrap/js/myajaxformoupload.js" ></script>
+    <!--<script src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js" type="text/jscript"></script>-->
+    <script src="/plugins/datepicker/bootstrap-datepicker.js" type="text/jscript"></script>
+    <script type="text/javascript">
+
+        var upstockFile = function () {
+            $("#stockFile").trigger("click");
+        }
+
+        var checkAll = function (table, checkStatus) {
+            $('#' + table + ' input:checkbox').each(function (i, item) {
+                if (!item.disabled) {
+                    item.checked = checkStatus;
+                }
+            });
+            //��¼��ѡ״̬
+            if (table == "steptable2") {
+                if (checkStatus) {
+                    purchaseAddDeliveryOrderShowTemp();
+                } else {
+                    purchaseDeleteDeliveryOrderShowTemp();
+                }
+            }
+        }
+        var step1Export = function () {
+            
+            $.ajax({
+                type: "get",
+                url: "/api/airshop/getUser",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+
+                        window.location = "/login.html";
+                        return;
+                    } else {
+
+
+                        var exportType = $("#hidStep1Export").val();
+                        var dateTime1 = $("#inputDate1").val();
+                        var dateTime2 = $("#inputDate2").val();
+                        if (dateTime1.length == 0 || dateTime2.length == 0) {
+                            dateTime1 = "";
+                            dateTime2 = "";
+                        }
+                        if (exportType == 1) {
+                            $('#noticeStockConfirm').modal({ keyboard: false }).show();
+                            $('#noticeStockConfirm').on('hide.bs.modal', function () {
+                                window.location = "/api/airshop/purchase/inventoryExport?pageIndex=1&pageSize=3000&detailStatus=1_4&isDoStock=1&supplierSkuNo=" + $("#inputSKU").val() + "&productModel=" + $("#inputItemCode").val() + "&sopPurchaseOrderNo=" + $("#inputOrder").val() + "&updateTimeBegin=" + dateTime1 + "&updateTimeEnd=" + dateTime2;
+                            })
+                            //alert("Notice:Please modify the stock status according to your stock. 0 means Check Stock, 1 means With Stock, 2 means Without Stock. Any other value will not be accepted.Please DO NOT modify any other column, or the import will be failed.");
+                        }
+                        else {
+                            $('#export1Confirm').modal({ keyboard: false }).show();
+                        }
+
+
+
+
+                    }
+                }
+            });
+
+            
+        }
+        var step2Export = function () {
+            
+
+
+            $.ajax({
+                type: "get",
+                url: "/api/airshop/getUser",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+
+                        window.location = "/login.html";
+                        return;
+                    } else {
+
+
+
+
+                        var exportType = $("#hidStep2Export").val();
+                        var dateTime1 = $("#inputDate1").val();
+                        var dateTime2 = $("#inputDate2").val();
+                        if (dateTime1.length == 0 || dateTime2.length == 0) {
+                            dateTime1 = "";
+                            dateTime2 = "";
+                        }
+                        if (exportType == 1) {
+                            window.location = "/api/airshop/purchase/detailExport?pageIndex=1&pageSize=3000&detailStatus=1_4&isDoStock=2&supplierSkuNo=" + $("#inputSKU").val() + "&productModel=" + $("#inputItemCode").val() + "&sopPurchaseOrderNo=" + $("#inputOrder").val() + "&updateTimeBegin=" + dateTime1 + "&updateTimeEnd=" + dateTime2;
+                        }
+                        else {
+                            $('#export2Confirm').modal({ keyboard: false }).show();
+                        }
+
+
+
+                    }
+                }
+            });
+
+
+            
+        }
+        //�ɹ����б���Ƶ�ѡ��
+        var SignStock = function (obj) {
+            if ($(obj).hasClass("airIcon_Check")) {//fa airIcon airIcon_Check
+                $(obj).removeClass("airIcon_Check").addClass("airIcon_With");
+                $(obj).parent().parent().children("td").eq(0).children("input").attr("name", "1");
+                $(obj).parent().parent().children("td").eq(0).children("input").removeAttr("disabled");
+                $(obj).parent().parent().children("td").eq(11).children("button").removeAttr("disabled");
+
+                purchaseAddSingleSign(obj);
+            } else if ($(obj).hasClass("airIcon_With")) {
+                $(obj).removeClass("airIcon_With").addClass("airIcon_WithOut");
+                $(obj).parent().parent().children("td").eq(0).children("input").attr("name", "2");
+                //$(obj).parent().parent().parent().children("td").eq(9).children("button").attr("disabled", "disabled"); 
+                purchaseAddSingleSign(obj);
+            } else if ($(obj).hasClass("airIcon_WithOut")) {
+                $(obj).removeClass("airIcon_WithOut").addClass("airIcon_Check");
+                $(obj).parent().parent().children("td").eq(0).children("input").attr("name", "0").attr("disabled", "disabled");
+                $(obj).parent().parent().children("td").eq(11).children("button").attr("disabled", "disabled");
+                purchaseAddSingleSign(obj);
+            }
+        }
+        //step2 //�ɹ����б���Ƶ�ѡ��
+        var SignStockStemp2 = function (obj) {
+            if ($(obj).hasClass("airIcon_Check")) {
+                $(obj).removeClass("airIcon_Check").addClass("airIcon_With");
+                $(obj).parent().parent().children("td").eq(0).children("input").attr("name", "1");
+                $(obj).parent().parent().children("td").eq(0).children("input").removeAttr("disabled");
+                $(obj).parent().parent().children("td").eq(9).children("button").removeAttr("disabled");
+            } else if ($(obj).hasClass("airIcon_With")) {
+                $(obj).removeClass("airIcon_With").addClass("airIcon_WithOut");
+                $(obj).parent().parent().children("td").eq(0).children("input").attr("name", "2").attr("disabled", "disabled")[0].checked = false;
+            } else if ($(obj).hasClass("airIcon_WithOut")) {
+                $(obj).removeClass("airIcon_WithOut").addClass("airIcon_With");
+                $(obj).parent().parent().children("td").eq(0).children("input").attr("name", "1").removeAttr("disabled");
+            }
+        }
+
+
+        //���÷�ҳ
+        var page = function (pageIndex, pageSize, TotalCount, pageFunction) {
+            var pageParam =
+            {
+                "pageIndex": pageIndex, "pageSize": pageSize, "TotalCount": TotalCount, "groupSize": 10, "url": pageFunction
+            };
+
+            var pre = "<ul class='pagination'>";
+
+
+            if (pageParam.pageIndex <= 1) {
+                pre = pre + '<li class="paginate_button previous disabled"><a href="javascript:;">Previous</a></li>';
+            } else {
+                var preIndex = Number(pageIndex) - 1;
+                pre = pre + '<li class="paginate_button previous"><a href="javascript:' + pageParam.url + '(' + preIndex + ')">Previous</a></li>';
+            }
+
+            //center start
+
+            var pageGroup = Math.ceil(pageIndex / pageParam.groupSize);
+            for (var i = (pageGroup - 1) * pageParam.groupSize; (i * pageParam.pageSize < pageParam.TotalCount && i < pageGroup * pageParam.groupSize); i++) {
+                if (pageParam.pageIndex == (i + 1)) {
+                    pre = pre + '<li class="paginate_button active"><a href="javascript:;" aria-controls="example2" data-dt-idx="' + (i + 1) + '" tabindex="0">' + (i + 1) + '</a></li>';
+                } else {
+                    pre = pre + '<li class="paginate_button"><a href="javascript:' + pageParam.url + '(' + (i + 1) + ');" aria-controls="example2" data-dt-idx="' + (i + 1) + '" tabindex="0">' + (i + 1) + '</a></li>';
+                }
+            }
+
+            //center end
+
+            if ((pageParam.pageIndex * pageParam.pageSize) >= pageParam.TotalCount) {
+                pre = pre + '<li class="paginate_button next disabled"><a href="javascript:;">Next</a></li>';
+            } else {
+                var nextIndex = Number(pageIndex) + 1;
+                pre = pre + '<li class="paginate_button next"><a href="javascript:' + pageParam.url + '(' + nextIndex + ');">Next</a></li>';
+            }
+
+            return pre + "</ul>";
+
+        }
+
+        //����tab��ȡ�ɹ����б�
+        var loadData = function (index) {
+            $("#TrackingNumberDiv").hide();
+            $("#supplierSkuDiv").show();
+            $("#itemCodeDiv").show();
+            $("#orderCodeDiv").show();
+            if (index == 1) {
+                $("#funcType").val("1");
+                getStep1List($("#step1Status").val());
+                $("#resendDiv").hide();
+            } else if (index == 2) {
+                $("#cheAllStep2").attr("checked",false);
+                $("#funcType").val("2");
+                getStep2List($("#step2Status").val());
+                $("#resendDiv").show();
+            } else if (index == 3) {
+                $("#TrackingNumberDiv").show();
+                $("#supplierSkuDiv").hide();
+                $("#itemCodeDiv").hide();
+                $("#orderCodeDiv").hide();
+                $("#funcType").val("3");
+                $("#resendDiv").hide();
+                getStep3List($("#step3Status").val());
+            } else if (index == 4) {
+                $("#funcType").val("4");
+                historyList1($("#step4Status").val());
+                $("#resendDiv").hide();
+            } else if (index == 5) {
+                $("#funcType").val("5");
+                historyList2($("#step5Status").val());
+                $("#resendDiv").hide();
+            } else if (index == 6) {
+                $("#funcType").val("6");
+                historyList3($("#step6Status").val());
+                $("#resendDiv").hide();
+            }
+        }
+        //����������ť
+        var searchData = function () {
+            console.log($("#funcType").val());
+            if ($("#funcType").val() == "1") {
+                getStep1List(1);
+                $("#step1Status").val("1");
+            } else if ($("#funcType").val() == "2") {
+                $("#step2Status").val("1");
+                getStep2List(1);
+            } else if ($("#funcType").val() == "3") {
+                $("#step3Status").val("1");
+                getStep3List(1);
+            } else if ($("#funcType").val() == "4") {
+                $("#step4Status").val("1");
+                historyList1(1);
+            } else if ($("#funcType").val() == "5") {
+                $("#step5Status").val("1");
+                historyList2(1);
+            } else if ($("#funcType").val() == "6") {
+                $("#step6Status").val("1");
+                historyList3(1);
+            }
+        }
+        var loadHtml = '<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>';
+        //��ȡ�ɹ����б�
+        $.tpl('purchaseListTemplate', [
+        '<tr><td><input type="checkbox" value="{sopPurchaseOrderDetailNo:s}" name="{stock:s}" {disabled:s}/></td><td><img width="50" height="50" src="{picUrl:s}"></td><td>{brandNo:s}</td><td><a href="javascript:purchaseOrderDetail(\'{sopPurchaseOrderNo:s}\')">{sopPurchaseOrderNo:s}</a></td><td>{supplierSkuNo:s}</td><td>{productModel:s}</td><td>{itemName:s}</td><td>{size:s}</td><td>{skuPrice:s}</td><td>{orderNo:s}</td><td>{dateStart:s}</td><td>{Count:s}</td><td><i class="fa airIcon {stockClass:s}" onclick="SignStock(this)"></i><button class="fa airIcon airIcon_Add" data-toggle="modal" onclick="purchaseAddSingleShow(this)" {disabled:s}></button><a  href="javascript:purchaseOrderDetailPrint(\'{sopPurchaseOrderNo:s}\')" class="fa airIcon airIcon_Print" ></a></td></tr>'
+    ]);
+        var getStep1List = function (pageIndex) {
+            $("#step1Status").val(pageIndex);
+            $("#steptable1").html(loadHtml);
+            //            var reservation = $("#reservation").val();
+            //            var dateTime = new Array();
+            var dateTime1 = $("#inputDate1").val();
+            var dateTime2 = $("#inputDate2").val();
+            if (dateTime1.length == 0 || dateTime2.length == 0) {
+                dateTime1 = "";
+                dateTime2 = "";
+            }
+            //            dateTime = reservation.split(" - ");
+            //            if (dateTime.length == 2) {
+            //                dateTime1 = dateTime[0];
+            //                dateTime2 = dateTime[1];
+            //            }
+            $.ajax({
+                type: "get",
+                //url: "/order/caigoudanlist.txt",
+                url: "/api/airshop/purchase/list",
+                data: { "pageIndex": pageIndex, "pageSize": 30, "detailStatus": "1_4", "isDoStock": "1", "supplierSkuNo": $("#inputSKU").val(), "productModel": $("#inputItemCode").val(), "updateTimeBegin": dateTime1, "updateTimeEnd": dateTime2, "sopPurchaseOrderNo": $("#inputOrder").val() },
+                dataType: "json",
+                success: function (data) {
+                    $("#hidStep1Export").val(0);
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        $("#steptable1").empty();
+                        $("#steppage1").empty();
+                        $("#steppage1Showing").empty();
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    $("#steptable1").empty();
+                    $.each(data.content.purchaseOrderDetails, function (i, item) {
+                        $("#hidStep1Export").val(1);
+                        $.tpl('purchaseListTemplate', {
+                         'picUrl':item.picUrl
+                        ,'brandNo': item.brandName
+                        , 'sopPurchaseOrderDetailNo': item.sopPurchaseOrderDetailNo
+                        , 'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                        , 'supplierSkuNo': item.supplierSkuNo
+                        , 'productModel': item.productModel
+                        , 'itemName': item.productName + " " + item.color
+                        , 'size': item.size
+                        , 'skuPrice': item.skuPrice
+                        , 'orderNo': item.orderNo
+                        , 'dateStart': item.createTime
+                        , 'Count': item.qty
+                        , 'stock': item.isStock
+                        , 'disabled': item.isStock == 0 ? "disabled='disabled'" : ""
+                        , 'stockClass': item.isStock == 0 ? "airIcon_Check" : (item.isStock == 1 ? "airIcon_With" : "airIcon_WithOut")
+                        }).appendTo("#steptable1");
+                    });
+                    $("#steppage1").html(page(pageIndex, 30, data.content.total, 'getStep1List'));
+                    $("#steppage1Showing").html(((pageIndex - 1) * 30 + 1) + " to " + (pageIndex * 30 > data.content.total ? data.content.total : pageIndex * 30) + " of " + data.content.total + " Results");
+                }
+            });
+        }
+       
+        var purchaseOrderDetailPrint = function (purchaseOrderNo) {
+
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/caigoudandetail.txt?purchaseOrderNo=" + purchaseOrderNo,
+                url: "/api/airshop/purchase/" + purchaseOrderNo + "/detail",
+                data: "",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+
+                    $("#sopPurchaseOrderNo").text(data.content.sopPurchaseOrderNo);
+                    $("#dateStart").text(data.content.createTime);
+                    $("#warehouseAddress").text(data.content.warehouseAddress + "");
+
+
+                    $("#purchaseProductList").empty();
+                    $.each(data.content.skuList, function (i, item) {
+                        $.tpl('purchaseTemplate', {
+                            'dateStart': data.content.createTime
+                        , 'picUrl': item.picUrl
+                        , 'productName': item.productName
+                        , 'productModel': item.productModel
+                        , 'supplierSkuNo': item.supplierSkuNo
+                        , 'count': item.qty
+                        }).appendTo("#purchaseProductList");
+                    });
+
+                    var headstr = "<html><head><title></title></head><body>";
+                    var footstr = "</body>";
+                    var printData = document.getElementById("purchaseOrderDetail").innerHTML; //��� div ������� html ����
+                    var oldstr = document.body.innerHTML;
+                    document.body.innerHTML = headstr + printData + footstr;
+                    window.print();
+                    document.body.innerHTML = oldstr;
+                    return false;
+                    //$('#purchaseOrderDetail').modal({ keyboard: false }).show();
+                    //$('#purchaseOrderDetail')
+                }
+            });
+        }
+        //��ȡ�ɹ�������
+        var purchaseOrderDetail = function (purchaseOrderNo) {
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/caigoudandetail.txt?purchaseOrderNo=" + purchaseOrderNo,
+                url: "/api/airshop/purchase/" + purchaseOrderNo + "/detail",
+                data: "",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+
+                    $("#sopPurchaseOrderNo").text(data.content.sopPurchaseOrderNo);
+                    $("#dateStart").text(data.content.createTime);
+                    $("#warehouseAddress").text(data.content.warehouseAddress + "");
+                    $("#shippingType").text(data.content.logisticsName);
+
+
+                    $("#purchaseProductList").empty();
+                    $.each(data.content.skuList, function (i, item) {
+                        $.tpl('purchaseTemplate', {
+                            'dateStart': data.content.createTime
+                        , 'picUrl': item.picUrl
+                        , 'productName': item.productName + " " + item.size
+                        , 'productModel': item.productModel
+                        , 'supplierSkuNo': item.supplierSkuNo
+                        , 'count': item.qty
+                        }).appendTo("#purchaseProductList");
+                    });
+
+                    $('#purchaseOrderDetail').modal({ keyboard: false }).show();
+                }
+            });
+        }
+
+        //������ǲɹ����п��
+        var purchaseAddListShow = function () {
+            $("#firstConfirm").show();
+            $("#secondConfirm").hide();
+            var purchaseOrderNoList = "";
+            $("#steptable1 input:checkbox").each(function (i, item) {
+                if (item.checked && !item.disabled) {
+                    purchaseOrderNoList += item.value + "_" + item.name + "|";
+                }
+
+            });
+            if (purchaseOrderNoList.length == 0) {
+                alert("Please Selected Add");
+                return;
+            }
+            purchaseOrderNoList = purchaseOrderNoList.substr(0, purchaseOrderNoList.length - 1);
+            $("#StockCount").val(purchaseOrderNoList);
+            if (purchaseOrderNoList.indexOf("_2") >= 0) {
+                $('#StockTip').modal({ keyboard: false }).show();
+            } else {
+                purchaseAddList();
+            }
+        }
+        var purchaseAddList = function () {
+
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/checkStock.txt",
+                url: "/api/airshop/purchase/checkStock",
+                data: { "pruchaseOrderInfo": $("#StockCount").val() },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    if (data.code == "0") {
+                        getStep2List(1);
+                        $("#funcType").val("2");
+                        $("#tabletabList li").removeClass("active").eq(1).addClass("active");
+                        $("#tableContentList .tab-pane").removeClass("active").eq(1).addClass("active");
+                    } else {
+                        alert("Opration Faild");
+                    }
+                }
+            });
+        }
+        //������ǲɹ����п��
+        var purchaseAddSingleShow = function (obj) {
+            $("#firstConfirm").show();
+            $("#secondConfirm").hide();
+            var cheObj = $(obj).parent().parent().children("td").eq(0).children("input");
+            if (cheObj.attr("value").length == 0 || cheObj.attr("name").length == 0) {
+                alert("PurchaseOrder Not Null");
+                return;
+            } else if (cheObj.attr("name") == "0") {
+                alert("Pleas Check Stock");
+                return;
+            }
+            $("#StockCount").val(cheObj.attr("value") + "_" + cheObj.attr("name"));
+            if (cheObj.attr("name") == "2") {
+                $('#StockTip').modal({ keyboard: false }).show();
+            } else {
+                purchaseAddSingle();
+            }
+        }
+        var purchaseAddSingleSign = function (obj) {
+            var detailStock = $(obj).parent().parent().children("td").eq(0).children("input").attr("name");
+            var detailNo = $(obj).parent().parent().children("td").eq(0).children("input").val();
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/checkStock.txt",
+                url: "/api/airshop/purchase/checkStock",
+                data: { "pruchaseOrderInfo": detailNo + "_" + detailStock, "type": "1" },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    if (data.code == "0") {
+
+                    } else {
+                        alert("Opration Faild");
+                    }
+                }
+            });
+        }
+        var purchaseAddSingle = function () {
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/checkStock.txt",
+                url: "/api/airshop/purchase/checkStock",
+                data: { "pruchaseOrderInfo": $("#StockCount").val() },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    if (data.code == "0") {
+                        if ($("#funcType").val() == "1") {
+                            getStep1List($("#step1Status").val());
+                        } else if ($("#funcType").val() == "2") {
+                            getStep2List($("#step2Status").val());
+                        }
+
+                        //$("#tabletabList li").removeClass("active").eq(1).addClass("active");
+                        //$("#tableContentList .tab-pane").removeClass("active").eq(1).addClass("active");
+                    } else {
+                        alert("Opration Faild");
+                    }
+                }
+            });
+        }
+
+        var firstsetStock = function () {
+            $("#firstConfirm").hide();
+            $("#secondConfirm").show();
+        }
+
+        var setStock = function () {
+
+            if ($("#StockCount").val().indexOf('|') >= 0) {
+                purchaseAddList();
+            } else {
+                purchaseAddSingle();
+            }
+            $('#StockTip').modal("hide");
+        }
+
+        //��ȡ�ɹ�����֤����Ժ���б�<img width="50" height="50" src="null">
+        $.tpl('purchaseListTemplate2', [
+        '<tr><td><input type="checkbox" {che:s} value="{sopPurchaseOrderDetailNo:s}" name="0" onclick="purchaseAddDeliveryOrderSingleRemember(this)"/></td><td><img width="50" height="50" src="{picUrl:s}"></td><td>{brandNo:s}</td><td><a href="javascript:purchaseOrderDetail(\'{sopPurchaseOrderNo:s}\')">{sopPurchaseOrderNo:s}</a></td><td>{supplierSkuNo:s}</td><td>{productModel:s}</td><td>{itemName:s}</td><td>{size:s}</td><td>{skuPrice:s}</td><td>{orderNo:s}</td><td>{dateStart:s}</td><td>{detailStatus:s}</td><td>{Count:s}</td><td><i class="fa airIcon airIcon_With" onclick="SignStockStemp2(this)"></i><button class="fa airIcon airIcon_Add" data-toggle="modal" onclick="purchaseAddDeliveryOrderSingleShow(this)"></button></td></tr>'
+    ]);
+        var getStep2List = function (pageIndex) {
+            $("#step2Status").val(pageIndex);
+            $("#steptable2").html(loadHtml);
+            var selectResend = $("#selectResend").val();
+            var reservation = $("#reservation").val();
+//            var dateTime = new Array();
+            var dateTime1 = $("#inputDate1").val();
+            var dateTime2 = $("#inputDate2").val();
+            if (dateTime1.length == 0 || dateTime2.length == 0) {
+                dateTime1 = "";
+                dateTime2 = "";
+            }
+//            dateTime = reservation.split(" - ");
+//            if (dateTime.length == 2) {
+//                dateTime1 = dateTime[0];
+//                dateTime2 = dateTime[1];
+//            }
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/caigoudanlist.txt",
+                url: "/api/airshop/purchase/list",
+                data: { "pageIndex": pageIndex, "pageSize": 30, "isDoStock": "2", "detailStatus": selectResend, "supplierSkuNo": $("#inputSKU").val(), "productModel": $("#inputItemCode").val(), "updateTimeBegin": dateTime1, "updateTimeEnd": dateTime2, "sopPurchaseOrderNo": $("#inputOrder").val() },
+                dataType: "json",
+                success: function (data) {
+                    $("#hidStep2Export").val(0);
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        $("#steptable2").empty();
+                        $("#steppage2").empty();
+                        $("#steppage2Showing").empty();
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    $("#steptable2").empty();
+                    var selectedValue = $("#saveParam").val();
+                    $.each(data.content.purchaseOrderDetails, function (i, item) {
+                        $("#hidStep2Export").val(1);
+                        var resend = 'No';
+                        if (item.detailStatus == '4') {
+                            resend = 'Yes';
+                        }
+                        $.tpl('purchaseListTemplate2', {
+                         'picUrl':item.picUrl
+                        ,'brandNo': item.brandName
+                        , 'che': selectedValue.indexOf(item.sopPurchaseOrderDetailNo) < 0 ? "" : "checked='checked'"
+                        , 'sopPurchaseOrderDetailNo': item.sopPurchaseOrderDetailNo
+                        , 'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                        , 'supplierSkuNo': item.supplierSkuNo
+                        , 'productModel': item.productModel
+                        , 'itemName': item.productName + " " + item.color
+                        , 'size': item.size
+                        , 'skuPrice': item.skuPrice
+                        , 'orderNo': item.orderNo
+                        , 'dateStart': item.createTime
+                        , 'detailStatus': resend
+                        , 'Count': item.qty
+                        , 'stock': 1
+                        }).appendTo("#steptable2");
+                    });
+
+                    $("#steppage2").html(page(pageIndex, 30, data.content.total, 'getStep2List'));
+                    $("#steppage2Showing").html(((pageIndex-1)*30+1) + " to " + (pageIndex * 30 > data.content.total ? data.content.total : pageIndex * 30) + " of " + data.content.total + " Results");
+                }
+            });
+        }
+        //�������� ���ƹ��ﳵ
+        var purchaseAddDeliveryOrderSingleRemember = function (item) {
+
+            var purchaseOrderNoList = $("#saveParam").val();
+            if (purchaseOrderNoList.length > 0) {
+                if (purchaseOrderNoList.indexOf(item.value) < 0) {
+                    if (item.checked) {
+                        purchaseOrderNoList += "," + item.value;
+                    } else {
+
+                    }
+                } else {
+                    if (item.checked) {
+
+                    } else {
+                        if (purchaseOrderNoList.indexOf(item.value + ",") >= 0) {
+                            purchaseOrderNoList = purchaseOrderNoList.replace(item.value + ",", "");
+                        } else if (purchaseOrderNoList.indexOf("," + item.value) >= 0) {
+                            purchaseOrderNoList = purchaseOrderNoList.replace("," + item.value, "");
+                        } else if (purchaseOrderNoList.indexOf(item.value) >= 0) {
+                            purchaseOrderNoList = purchaseOrderNoList.replace(item.value, "");
+                        }
+                    }
+
+                }
+            } else {
+                if (item.checked) {
+                    purchaseOrderNoList = item.value;
+                }
+            }
+            $("#saveParam").val(purchaseOrderNoList);
+        }
+        //������ʱ������ ���ƹ��ﳵ
+        var purchaseAddDeliveryOrderShowTemp = function () {
+            var purchaseOrderNoList = $("#saveParam").val();
+            if (purchaseOrderNoList.length > 0) {
+                purchaseOrderNoList += ",";
+            }
+            $("#steptable2 input").each(function (i, item) {
+                if (item.checked) {
+                    if (purchaseOrderNoList.indexOf(item.value) < 0) {
+                        purchaseOrderNoList += item.value + ",";
+                    }
+                }
+            });
+            purchaseOrderNoList = purchaseOrderNoList.substr(0, purchaseOrderNoList.length - 1);
+            if (purchaseOrderNoList.length == 0) {
+                alert("Please Selected data");
+                return;
+            }
+            $("#saveParam").val(purchaseOrderNoList);
+        }
+        //ȡ����ʱ������ ���ƹ��ﳵ
+        var purchaseDeleteDeliveryOrderShowTemp = function () {
+            var purchaseOrderNoList = $("#saveParam").val();
+            if (purchaseOrderNoList.length > 0) {
+                $("#steptable2 input").each(function (i, item) {
+                    if (purchaseOrderNoList.indexOf(item.value + ",") >= 0) {
+                        purchaseOrderNoList = purchaseOrderNoList.replace(item.value + ",", "");
+                    } else if (purchaseOrderNoList.indexOf("," + item.value) >= 0) {
+                        purchaseOrderNoList = purchaseOrderNoList.replace("," + item.value, "");
+                    } else if (purchaseOrderNoList.indexOf(item.value) >= 0) {
+                        purchaseOrderNoList = purchaseOrderNoList.replace(item.value, "");
+                    }
+                });
+
+            }
+            $("#saveParam").val(purchaseOrderNoList);
+        }
+        //�ɹ����������뷢����������
+        var purchaseAddDeliveryOrderShow = function () {
+
+            var purchaseOrderNoList = $("#saveParam").val();
+            if (purchaseOrderNoList.length > 0) {
+                purchaseOrderNoList += ",";
+            }
+            $("#steptable2 input").each(function (i, item) {
+                if (item.checked) {
+                    if (purchaseOrderNoList.indexOf(item.value) < 0) {
+                        purchaseOrderNoList += item.value + ",";
+                    }
+                }
+            });
+            purchaseOrderNoList = purchaseOrderNoList.substr(0, purchaseOrderNoList.length - 1);
+            if (purchaseOrderNoList.length == 0) {
+                alert("Please Selected data");
+                return;
+            }
+            $("#saveParam").val(purchaseOrderNoList);
+            $('#deliver').modal({ keyboard: false }).show();
+
+        }
+        //�ɹ��������뷢����
+        var purchaseAddDeliveryOrder = function () {
+            //deliver
+            $.ajax({
+                type: "post",
+                //url: "/pages/examples/caigoudanfahuo.txt",
+                url: "/api/airshop/purchase/create/deliveryOrder",
+                //contentType: "application/json",
+                data: { "logisticsName": $("#shipping").val(), "logisticsOrderNo": $("#trackNo").val(), "sopPurchaseOrderDetailNo": $("#saveParam").val() },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    if (data.code == "0") {
+                        getStep3List(1);
+                        $("#funcType").val("3");
+                        $("#tabletabList li").removeClass("active").eq(2).addClass("active");
+                        $("#tableContentList .tab-pane").removeClass("active").eq(2).addClass("active");
+                        $('#deliver').modal("hide");
+                        $("#saveParam").val("");
+                    } else {
+                        alert("Opration Faild");
+                    }
+                }
+            });
+        }
+
+        //�ɹ����������뷢����
+        var purchaseAddDeliveryOrderSingleShow = function (obj) {
+            var cheObj = $(obj).parent().parent().children("td").eq(0).children("input");
+            if (cheObj.attr("value").length == 0 || cheObj.attr("name").length == 0) {
+                alert("PurchaseOrder Not Null");
+                return;
+            }
+            if (cheObj.attr("name") == "2") {
+                $("#StockCount").val(cheObj.attr("value") + "_" + cheObj.attr("name"));
+                $('#StockTip').modal({ keyboard: false }).show();
+
+            } else {
+                $("#saveParam").val(cheObj.attr("value"));
+                $('#deliver').modal({ keyboard: false }).show();
+            }
+
+
+        }
+
+        //��ȡ�������б�
+        $.tpl('step3', [
+        '<tr><td><a href="javascript:parceldetail(\'{sopDeliveryOrderNo:s}\')">{sopDeliveryOrderNo:s}</a></td><td>{logisticsOrderNo:s}</td><td>{skucount:s}</td><td>{dateDeliver:s}</td><td><i class="fa airIcon airIcon_Transport"></i><i class="fa airIcon airIcon_Print" onclick="parceldetailPrint(\'{sopDeliveryOrderNo:s}\')"></i></td></tr>'
+    ]);
+        var getStep3List = function (pageIndex) {
+            $("#step3Status").val(pageIndex);
+            $("#steptable3").html(loadHtml);
+//            var reservation = $("#reservation").val();
+//            var dateTime = new Array();
+            var dateTime1 = $("#inputDate1").val();
+            var dateTime2 = $("#inputDate2").val();
+            if (dateTime1.length == 0 || dateTime2.length == 0) {
+                dateTime1 = "";
+                dateTime2 = "";
+            }
+//            dateTime = reservation.split(" - ");
+//            if (dateTime.length == 2) {
+//                dateTime1 = dateTime[0];
+//                dateTime2 = dateTime[1];
+//            }
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/list.txt",
+                url: "/api/airshop/deliveryOrder/list",
+                data: { "start": pageIndex, "length": "30", "logisticsOrderNo": "", "SopDeliverOrderNo": $("#inputTrackingNumber").val(), "updateTimeBegin": dateTime1, "updateTimeEnd": dateTime2 },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        $("#steptable3").empty();
+                        $("#steppage3").empty();
+                        $("#steppage3Showing").empty();
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    $("#steptable3").empty();
+                    $.each(data.content.deliverOrders, function (i, item) {
+                        $.tpl('step3', {
+                            'sopDeliveryOrderNo': item.sopDeliveryOrderNo
+                        , 'logisticsOrderNo': item.logisticsOrderNo
+                        , 'skucount': item.deliveryCount
+                        , 'dateDeliver': item.dateDeliver
+                        , 'status': item.deliveryStatus
+                        }).appendTo("#steptable3");
+                    });
+
+                    $("#steppage3").html(page(pageIndex, 30, data.content.total, 'getStep3List'));
+                    $("#steppage3Showing").html(((pageIndex-1)*30+1) + " to " + (pageIndex * 30 > data.content.total ? data.content.total : pageIndex * 30) + " of " + data.content.total + " Results");
+                }
+            });
+        }
+        
+        var parceldetailPrint = function (postCode) {
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/faHuoDanList.txt?deliveryOrderNo=" + postCode,
+                url: "/api/airshop/deliveryOrder/" + postCode + "/detail",
+                data: "",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    $("#printDeliverContent").empty();
+                    $.each(data.content.purchaseOrderDetails, function (i, item) {
+                        $.tpl('parceldetailPrint', {
+                            'brandNo': item.brandName
+                        , 'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                        , 'supplierSku': item.supplierSkuNo
+                        , 'size': item.productName + " " + item.color + " " + item.size
+                        , 'price': item.skuPrice
+                        , 'picUrl': item.picUrl
+                        }).appendTo("#printDeliverContent");
+                    });
+
+                    var headstr = "<html><head><title></title></head><body>";
+                    var footstr = "</body>";
+                    var printData = document.getElementById("printDeliverDetail").innerHTML;
+                    var oldstr = document.body.innerHTML;
+                    document.body.innerHTML = headstr + printData + footstr;
+                    window.print();
+                    document.body.innerHTML = oldstr;
+                    return false;
+                    //$('#parcel_detail').modal({ keyboard: false }).show();
+                }
+            });
+        }
+        //���ݷ������Ż�ȡ�ɹ����б�
+        $.tpl('parceldetail', [
+        '<tr><td>{brandNo:s}</td><td>{sopPurchaseOrderNo:s}</td><td>{supplierSku:s}</td><td>{itemCode:s}</td><td>{size:s}</td><td>{price:s}</td><td>{date:s}</td><td>{count:s}</td><td>{status:s}</td></tr>'
+    ]);
+        var parceldetail = function (postCode) {
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/faHuoDanList.txt?deliveryOrderNo=" + postCode,
+                url: "/api/airshop/deliveryOrder/" + postCode + "/detail",
+                data: "",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    $("#parcelContent").empty();
+                    $.each(data.content.purchaseOrderDetails, function (i, item) {
+                        $.tpl('parceldetail', {
+                            'brandNo': item.brandName
+                        , 'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                        , 'supplierSku': item.supplierSkuNo
+                        , 'itemCode': item.productModel
+                        , 'size': item.productName + " " + item.color + " " + item.size
+                        , 'price': item.skuPrice
+                        , 'date': item.createTime
+                        , 'count': item.qty
+                        , 'status': item.detailStatus =='5'?'Canceled':'Normal'
+                        , 'stock': '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>'
+                        }).appendTo("#parcelContent");
+                    });
+                    if (data.content.purchaseOrderDetails.length > 0) {
+                        $("#exportLink").attr("href", "/api/airshop/deliveryOrder/" + postCode + "/detailExport");
+                    }
+                    $('#parcel_detail').modal({ keyboard: false }).show();
+                }
+            });
+        }
+
+        //��ȡhistory1�б�
+        $.tpl('history1', [
+        '<tr><td>{brandNo:s}</td><td><a href="javascript:purchaseOrderDetail(\'{sopPurchaseOrderNo:s}\')">{sopPurchaseOrderNo:s}</a></td><td>{supplierSkuNo:s}</td><td>{productModel:s}</td><td>{size:s}</td><td>{dateStart:s}</td><td>{received:s}</td><td>{Count:s}</td></tr>'
+    ]);
+        var historyList1 = function (pageIndex) {
+            $("#step4Status").val(pageIndex);
+            $("#historytable1").html(loadHtml);
+//            var reservation = $("#reservation").val();
+//            var dateTime = new Array();
+            var dateTime1 = $("#inputDate1").val();
+            var dateTime2 = $("#inputDate2").val();
+            if (dateTime1.length == 0 || dateTime2.length == 0) {
+                dateTime1 = "";
+                dateTime2 = "";
+            }
+//            dateTime = reservation.split(" - ");
+//            if (dateTime.length == 2) {
+//                dateTime1 = dateTime[0];
+//                dateTime2 = dateTime[1];
+//            }
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/caigoudanlist.txt",
+                url: "/api/airshop/purchase/list",
+                data: { "pageIndex": pageIndex, "pageSize": 30, "isDoStock": "0", "detailStatus": "6", "supplierSkuNo": $("#inputSKU").val(), "productModel": $("#inputItemCode").val(), "updateTimeBegin": dateTime1, "updateTimeEnd": dateTime2, "sopPurchaseOrderNo": $("#inputOrder").val() },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        $("#historytable1").empty();
+                        $("#historypage1").empty();
+                        $("#historypage1Showing").empty();
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    $("#historytable1").empty();
+                    $.each(data.content.purchaseOrderDetails, function (i, item) {
+                        $.tpl('history1', {
+                            'brandNo': item.brandName
+                            , 'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                            , 'supplierSkuNo': item.supplierSkuNo
+                            , 'productModel': item.productModel
+                            , 'size': item.productName + " " + item.color + " " + item.size
+                            , 'dateStart': item.createTime
+                            , 'received': item.dateArrival
+                            , 'Count': item.qty
+                        }).appendTo("#historytable1");
+                    });
+
+                    $("#historypage1").html(page(pageIndex, 30, data.content.total, 'historyList1'));
+                    $("#historypage1Showing").html(((pageIndex-1)*30+1) + " to " + (pageIndex * 30 > data.content.total ? data.content.total : pageIndex * 30) + " of " + data.content.total + " Results");
+                }
+            });
+        }
+
+        //��ȡhistory2�б�
+        $.tpl('history2', [
+        '<tr><td>{brandNo:s}</td><td><a href="javascript:purchaseOrderDetail(\'{sopPurchaseOrderNo:s}\')">{sopPurchaseOrderNo:s}</a></td><td>{supplierSkuNo:s}</td><td>{productModel:s}</td><td>{size:s}</td><td>{dateStart:s}</td><td>{received:s}</td><td>{Count:s}</td><td><i class="fa airIcon airIcon_NoStock"></i></td></tr>'
+    ]);
+        var historyList2 = function (pageIndex) {
+            $("#step5Status").val(pageIndex);
+            $("#historytable2").html(loadHtml);
+//            var reservation = $("#reservation").val();
+//            var dateTime = new Array();
+            var dateTime1 = $("#inputDate1").val();
+            var dateTime2 = $("#inputDate2").val();
+            if (dateTime1.length == 0 || dateTime2.length == 0) {
+                dateTime1 = "";
+                dateTime2 = "";
+            }
+//            dateTime = reservation.split(" - ");
+//            if (dateTime.length == 2) {
+//                dateTime1 = dateTime[0];
+//                dateTime2 = dateTime[1];
+//            }
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/caigoudanlist.txt",
+                url: "/api/airshop/purchase/list",
+                data: { "pageIndex": pageIndex, "pageSize": 30, "isDoStock": "0", "detailStatus": "5", "supplierSkuNo": $("#inputSKU").val(), "productModel": $("#inputItemCode").val(), "updateTimeBegin": dateTime1, "updateTimeEnd": dateTime2, "sopPurchaseOrderNo": $("#inputOrder").val() },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        $("#historytable2").empty();
+                        $("#historypage2").empty();
+                        $("#historypage2Showing").empty();
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    $("#historytable2").empty();
+                    $.each(data.content.purchaseOrderDetails, function (i, item) {
+                        $.tpl('history2', {
+                            'brandNo': item.brandName
+                            , 'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                            , 'supplierSkuNo': item.supplierSkuNo
+                            , 'productModel': item.productModel
+                            , 'size': item.productName + " " + item.color + " " + item.size
+                            , 'dateStart': item.createTime
+                            , 'received': item.dateCanceled
+                            , 'Count': item.qty
+                            , 'status': '<i class="fa fa-fw fa-ban"></i>'
+                        }).appendTo("#historytable2");
+                    });
+
+                    $("#historypage2").html(page(pageIndex, 30, data.content.total, 'historyList2'));
+                    $("#historypage2Showing").html(((pageIndex-1)*30+1) + " to " + (pageIndex * 30 > data.content.total ? data.content.total : pageIndex * 30) + " of " + data.content.total + " Results");
+                }
+            });
+        }
+        //��ȡhistory3�б�
+        $.tpl('history3', [
+        '<tr><td>{brandNo:s}</td><td><a href="javascript:purchaseOrderDetail(\'{sopPurchaseOrderNo:s}\')">{sopPurchaseOrderNo:s}</a></td><td>{supplierSkuNo:s}</td><td>{productModel:s}</td><td>{size:s}</td><td>{dateStart:s}</td><td>{received:s}</td><td>{Count:s}</td><td><i class="fa airIcon airIcon_Canceled"></i></td></tr>'
+    ]);
+        var historyList3 = function (pageIndex) {
+            $("#step6Status").val(pageIndex);
+            $("#historytable3").html(loadHtml);
+//            var reservation = $("#reservation").val();
+//            var dateTime = new Array();
+            var dateTime1 = $("#inputDate1").val();
+            var dateTime2 = $("#inputDate2").val();
+            if (dateTime1.length == 0 || dateTime2.length == 0) {
+                dateTime1 = "";
+                dateTime2 = "";
+            }
+//            dateTime = reservation.split(" - ");
+//            if (dateTime.length == 2) {
+//                dateTime1 = dateTime[0];
+//                dateTime2 = dateTime[1];
+//            }
+            $.ajax({
+                type: "get",
+                //url: "/pages/examples/caigoudanlist.txt",
+                url: "/api/airshop/purchase/list",
+                data: { "pageIndex": pageIndex, "pageSize": 30, "isDoStock": "0", "detailStatus": "7", "supplierSkuNo": $("#inputSKU").val(), "productModel": $("#inputItemCode").val(), "updateTimeBegin": dateTime1, "updateTimeEnd": dateTime2, "sopPurchaseOrderNo": $("#inputOrder").val() },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        $("#historytable3").empty();
+                        $("#historypage3").empty();
+                        $("#historypage3Showing").empty();
+                        return;
+                    }
+                    if (data.code == "3") {
+                        window.location = "/login.html";
+                        return;
+                    }
+                    $("#historytable3").empty();
+                    $.each(data.content.purchaseOrderDetails, function (i, item) {
+                        $.tpl('history3', {
+                            'brandNo': item.brandName
+                            , 'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                            , 'supplierSkuNo': item.supplierSkuNo
+                            , 'productModel': item.productModel
+                            , 'size': item.productName + " " + item.color + " " + item.size
+                            , 'dateStart': item.createTime
+                            , 'received': ''
+                            , 'Count': 1
+                            , 'status': '<span class="glyphicon glyphicon-remove"></span>'
+                        }).appendTo("#historytable3");
+                    });
+
+                    $("#historypage3").html(page(pageIndex, 20, data.content.total, 'historyList3'));
+                    $("#historypage3Showing").html(((pageIndex-1)*30+1) + " to " + (pageIndex * 30 > data.content.total ? data.content.total : pageIndex * 30) + " of " + data.content.total + " Results");
+                }
+            });
+        }
+
+
+
+        //�˳�
+        var logOut = function () {
+            $.get("/api/airshop/logout", function (data) {
+                window.location = "/login.html";
+            });
+        }
+
+        $(function () {
+
+            $('#inputDate1').datepicker({ format: "dd-mm-yyyy", "autoclose": true }).on("click", function (ev) {
+                $("#inputDate1").datepicker("setEndDate", $('#inputDate2').val());
+            });
+
+            $('#inputDate2').datepicker({ format: "dd-mm-yyyy", "autoclose": true }).on('click', function (ev) {
+                $("#inputDate2").datepicker("setStartDate", $('#inputDate1').val());
+            });
+
+
+            //�ɹ��������ӡ���
+            $.tpl('purchaseTemplate', [
+                '<div class="row invoice-info">' +
+                '<div class="col-sm-4 invoice-col"><address><strong>Order Date {dateStart:s}</strong><br><img src="{picUrl:s}" width="137" height="182"/></address></div>' + //src="{picUrl:s}"
+                '<div class="col-sm-4 invoice-col"><address><strong>Item Name</strong><br>{productName:s}</address></div>' +
+                '<div class="col-sm-4 invoice-col"><address><strong>Art. No.</strong><br>{productModel:s}</address></div>' +
+                '<div class="col-sm-4 invoice-col"><address><strong>Supplier SKU</strong><br>{supplierSkuNo:s}</address></div>' +
+                '<div class="col-sm-4 invoice-col"><address><strong>Qty</strong><br>{count:s}</address></div>' +
+                '</div>'
+            ]);
+
+            //���ݷ������Ż�ȡ�ɹ����б��ӡ
+            $.tpl('parceldetailPrint', [
+            '<tr><td>{sopPurchaseOrderNo:s}</td><td>{brandNo:s}</td><td>{supplierSku:s}</td><td>{size:s}</td><td>{price:s}</td><td><img src="{picUrl:s}" width="200" height="100"></td></tr>' //src="{picUrl:s}"
+            ]);
+
+
+
+            getStep1List(1);
+            //$('#reservation').daterangepicker({ timePickerIncrement: 30, format: 'MM/DD/YYYY' });
+            $.tpl('importInventoryErrorTemplate', [
+             '<tr><td>{sopPurchaseOrderNo:s}</td><td>{supplierSkuNo:s}</td><td>{memo:s}</td></tr>'
+            ]);
+            $("#stockFile").change(function () {
+                if ($("#stockFile").val().length == 0) {
+                    return;
+                }
+                $("#errorContent").empty();
+                $("#stockFileForm").ajaxSubmit({
+                    "dataType": "json",
+                    "success": function (data) {
+                        if (data.code == "1") {
+                            //alert(data.msg);
+                            $("#historytable3").empty();
+                            return;
+                        }
+                        if (data.code == "3") {
+                            window.location = "/login.html";
+                            return;
+                        }
+                        if (data.code == 2) {
+                            $("#importErrorShow").modal({ keyboard: false }).show();
+                            //$('#errorContent').html("");
+                            //$('#importError').modal({ keyboard: false }).show();
+                            return;
+                        }
+                        if (data.code == "200") {
+                            if (data.content.length > 0) {
+                                $.each(data.content, function (i, item) {
+                                    $.tpl('importInventoryErrorTemplate', {
+                                        'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                           , 'supplierSkuNo': item.supplierSkuNo
+                           , 'memo': item.memo
+                                    }).appendTo("#errorContent");
+                                });
+                                if (data.content.length == 1) {
+                                    $('#H4').html("<b>Beware, the order list below has invalid data. Import failed.<br />Please check your data. </b>");
+                                }
+                                if (data.content.length > 1) {
+                                    $('#H4').html("<b>Beware, the orders list below have invalid data. Import failed.<br />Please check your data. </b>");
+                                }
+                                $('#importError').modal({ keyboard: false }).show();
+                            }
+                        } else {
+                            $.each(data.content, function (i, item) {
+                                $.tpl('importInventoryErrorTemplate', {
+                                    'sopPurchaseOrderNo': item.sopPurchaseOrderNo
+                           , 'supplierSkuNo': item.supplierSkuNo
+                           , 'memo': item.memo
+                                }).appendTo("#errorContent");
+                            });
+                            if (data.content.length == 1) {
+                                $('#H4').html("<b>Beware, the order list below has invalid data. Import failed.<br />Please check your data. </b>");
+                            }
+                            if (data.content.length > 1) {
+                                $('#H4').html("<b>Beware, the orders list below have invalid data. Import failed.<br />Please check your data. </b>");
+                            }
+                            $('#importError').modal({ keyboard: false }).show();
+                        }
+                        getStep1List(1);
+                        $("#step1Status").val("1");
+                        $("#stockFile").val("");
+                    }
+                });
+
+            });
+
+            $.ajax({
+                type: "get",
+                url: "/api/airshop/getUser",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "1") {
+                        //alert(data.msg);
+                        return;
+                    }
+                    if (data.code == "3") {
+
+                        window.location = "/login.html";
+                        return;
+                    } else {
+                        $("#SupplierName").html(data.content.accountName);
+                        getStep1List(1);
+                    }
+                }
+            });
+
+
+            $('#stepOK1').click(function () {
+                $('#myModal').modal({ keyboard: false }).show();
+            });
+        });
+</script>
+    <div class="modal fade" id="deliver" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-4 control-label">
+                                Shipping Type</label>
+                            <div class="col-sm-7">
+                                <input type="input" class="form-control" id="shipping" placeholder="Shipping Type">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-4 control-label">
+                                Tracking Number</label>
+                            <div class="col-sm-7">
+                                <input type="input" class="form-control" id="trackNo" placeholder="Tracking Number">
+                                <input type="hidden" id="saveParam">
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="text-align: center;">
+                    <button type="button" class="btn btn-primary" onClick="purchaseAddDeliveryOrder()">
+                        OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade container" id="parcel_detail" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        x</button>
+                    <h4 class="modal-title" id="H1">
+                        Parcel Detail
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <caption class="caption" style="margin-left: 8px;">
+                            <label>&nbsp;&nbsp;</label>
+                            <span class="box-tools">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" id="exportLink"><i class="fa airIcon airIcon_Export"></i>Export</a></span>
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Brand
+                                </th>
+                                <th>
+                                    Order Code
+                                </th>
+                                <th>
+                                    Supplier SKU
+                                </th>
+                                <th>
+                                    Item Code
+                                </th>
+                                <th>
+                                    Item Name
+                                </th>
+                                <th>
+                                    Price
+                                </th>
+                                <th>
+                                    Date
+                                </th>
+                                <th>
+                                    Qty
+                                </th>
+                                  <th>
+                                    Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="parcelContent">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade container" id="printDeliverDetail" tabindex="-1" role="dialog"
+        aria-hidden="true">
+        <div class="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        x</button>
+                    <h4 class="modal-title" id="H3">
+                        Parcel Detail
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Order Code
+                                </th>
+                                <th>
+                                    Brand
+                                </th>
+                                <th>
+                                    Supplier SKU
+                                </th>
+                                <th>
+                                    Item Name
+                                </th>
+                                <th>
+                                    Price
+                                </th>
+                                <th>
+                                    Picture
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="printDeliverContent">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade container" id="purchaseOrderDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        x</button>
+                    <h4 class="modal-title" id="H2">
+                        Purchase Detail
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <section class="invoice" id="purchaseOrderDetailContent">
+                          <!-- title row -->
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <h2 class="page-header">
+                                Order # <span id="sopPurchaseOrderNo"> </span> - Prepare to Ship
+                                <small class="pull-right"> </small>
+                              </h2>
+                            </div>
+                            <!-- /.col -->
+                          </div>
+
+                          <!-- info row -->
+                          <div id="purchaseProductList">
+                          
+                          </div>
+                          <!-- /.row -->
+
+                          <div class="row invoice-info">
+                            <div class="col-sm-4 invoice-col">
+                              <address>
+                                <strong>Shipping Address</strong><br>
+                                <div class="col-sm-4" id="warehouseAddressg"> </div>
+                              </address>
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-4 invoice-col">
+                              <address>
+                                <strong>Shipping Method</strong><br>
+                                <span id="shippingType"> </span>
+                              </address>
+                            </div>
+                            <!-- /.col -->
+                          </div>
+                          <div class="row no-print">
+                            <div class="col-xs-12">
+                              <!--<a href="invoice-print.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>-->
+                              
+                              <!--<button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
+                                <i class="fa fa-download"></i> Generate PDF
+                              </button>-->
+                            </div>
+                          </div>
+                    </section>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade container" id="StockTip">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- form start -->
+                <div class="modal-header" style="border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        X</button>
+                    <!--<h4 class="modal-title">Warning</h4>-->
+                </div>
+                <div id="secondConfirm" style="display: none;">
+                    <div class="modal-body" style="padding: 0 60px 60px;">
+                        <h3 class="text-center" style="margin: 0 0 10px;">
+                            Clear stock of SKU to zero in process</h3>
+                        <p>
+                            Even include the items you have already marked as with stock.Are you sure ?</p>
+                    </div>
+                    <div class="modal-footer" style="text-align: center;">
+                        <button class="btn btn-primary" type="button" onClick="setStock()">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes,I am sure&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                        <button data-dismiss="modal" class="btn btn-default" type="button">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No,let me check again&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                    </div>
+                </div>
+                <div id="firstConfirm">
+                    <div class="modal-body" style="padding: 0 60px 60px;">
+                        <h3 class="text-center" style="margin: 0 0 10px;">
+                            Warning</h3>
+                        <p>
+                            This operation will reset all the stock of this SKU to zero!</p>
+                    </div>
+                    <div class="modal-footer" style="text-align: center;">
+                        <button class="btn btn-primary" type="button" onClick="firstsetStock()">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                        <button data-dismiss="modal" class="btn btn-default" type="button">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cancel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                        <input type="hidden" value="" id="StockCount" title="1" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade container" id="export1Confirm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        X</button>
+                </div>
+                <div>
+                    <!-- form start -->
+                    <div class="modal-body" style="padding: 0 60px 60px;">
+                        <h3 class="text-center" style="margin: 0 0 10px;">
+                            No data found</h3>
+                        <p>
+                            You have no orders waiting for process</p>
+                    </div>
+                    <div class="modal-footer" style="text-align: center;">
+                        <button data-dismiss="modal" class="btn btn-primary" type="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade container" id="export2Confirm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        X</button>
+                </div>
+                <div class="modal-body" style="padding: 0 60px 60px;">
+                    <h3 class="text-center" style="margin: 0 0 10px;">
+                        No data found</h3>
+                    <p>
+                        All your orders have been shipped</p>
+                </div>
+                <div class="modal-footer" style="text-align: center;">
+                    <button data-dismiss="modal" class="btn btn-primary" type="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade container" id="noticeStockConfirm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        X</button>
+                </div>
+                <div class="modal-body" style="padding: 0 60px 60px;">
+                    <h3 class="text-center" style="margin: 0 0 10px;">
+                        Warning</h3>
+                    <p>
+                        Notice:Please modify the stock status according to your stock. 0 means Check Stock,
+                        1 means With Stock, 2 means Without Stock. Any other value will not be accepted.Please
+                        DO NOT modify any other column, or the import will be failed.</p>
+                </div>
+                <div class="modal-footer" style="text-align: center;">
+                    <button data-dismiss="modal" class="btn btn-primary" type="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade container" id="importError" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        x</button>
+                    <h4 class="modal-title" id="H4">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Order Code
+                                </th>
+                                <th>
+                                    Supplier SKU
+                                </th>
+                                <th>
+                                    Error Message
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="errorContent">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+    <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="importErrorShow" class="modal fade">
+		<div class="modal-dialog modal-airShop1">
+			<div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="H6">
+                        Error
+                    </h4>
+                </div>
+                <div class="modal-body" id="errorMsg">
+                     Beware, you've imported invalid data. Import failed!
+                </div>
+                <div class="modal-footer" style="text-align:center;">
+                    <button data-dismiss="modal" class="btn btn-primary" type="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+				</div>
+            </div>
+		</div>
+	</div>
+
+</body>
+</html>

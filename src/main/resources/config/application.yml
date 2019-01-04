@@ -1,0 +1,207 @@
+server: 
+  port: 8082
+  connectionTimeout: 600000
+  session:
+    timeout: 3600
+spring:
+  application.name: airshop
+  profiles.active: qa
+airshop:
+  api:
+    url:
+      hubOrderDetailUrl: "http://172.20.11.193:9090/orderDetail/getOrderNoByMasterNo"
+      findStockPage: "/SkuStock/FindSkuStockbyPage"
+      findStockPageExport: "/SkuStock/FindSkuStockExport"
+      updateSkuStock: "/SkuStock/UpdateSkuStock"
+      findSkuStockImport: "/SkuStock/FindSkuStockImport"
+      login: "/Account/FindSopUser"
+      returnList: "/Purchase/FindRorderbyPage"
+      returnOrder: "/Purchase/FindRorder"
+      returnModifyOrder: "/Purchase/ModifyRorderStatus"
+      deliverOrderListUri: "/Purchase/FindDorderbyPage"
+      sorderOrderListUri: "/Purchase/FindSorderbyPage"
+      purchaseListUri: "/purchase/findporderbypage"
+      findPorderCheckExport: "/Purchase/FindPorderCheckExport"
+      findPorderExportUri: "/Purchase/FindPorderExport"
+      findPorderImportUri: "/Purchase/FindPorderImport"
+      findSorderExportUri: "/Purchase/FindSorderExport"
+      checkStockUri: "/Purchase/ModifyPorderStock"
+      stockUri: "/Purchase/ModifyPorderCheckStock"
+      findDirectPorderbyPage: "/DirectDeliveryPurchase/FindDirectPorderbyPage"
+      findDirectPorderStockedbyPage: "/DirectDeliveryPurchase/FindDirectPorderStockedbyPage"
+      modifyDirectPorderStock: "/DirectDeliveryPurchase/ModifyDirectPorderStock"
+      findDirectPorderTransInfo: "/DirectDeliveryPurchase/FindDirectPorderTransInfo"
+      createDirectDeliveryOrder: "/DirectDeliveryPurchase/createDirectDeliveryOrder"
+      findDirectDorderbyPage: "/DirectDeliveryPurchase/FindDirectDorderbyPage"
+      findDirectSupplierLogisticsCompany: "/DirectDeliveryPurchase/FindDirectSupplierLogisticsCompany"
+      entryDirectDorderDomesticLogistics: "/DirectDeliveryPurchase/EntryDirectDorderDomesticLogistics"
+      findDirectDorderDetail: "/DirectDeliveryPurchase/FindDirectDorderDetail"
+      findDirectPorderDetail: "/DirectDeliveryPurchase/FindDirectPorderDetail"
+      findSupplierSegments: "/DirectDeliveryPurchase/FindSupplierSegments"
+      findDirectPorderCanceledbyPage: "/DirectDeliveryPurchase/FindDirectPorderCanceledbyPage"
+      findPorder: /Purchase/FindPorder
+      findDorder: /Purchase/FindDorder
+      createDeliveryorder: /Purchase/CreateDeliveryorder
+      productUri: /product/postsearch
+      salesByDay: /DataStatistics/GetSalesByDay
+      salesByMonth: /DataStatistics/GetSupplierSalesMonth
+      quitList: "/Purchase/FindSRorderbyPage"
+      quitOrder: "/Purchase/FindSRorder"
+      modifyPurchasePrint: "/Purchase/ModifyPurchasePrint"
+      findPurchaseIsPrint: "/Purchase/FindPurchaseIsPrint"
+      quitModifyOrder: "/Purchase/ModifySRorderStatus"
+      salesByMonthPerformance: /DataStatistics/GetSupplierSalesMonthPerformance
+      salesByMonthWeek: /DataStatistics/GetSupplierSalesMonthWeek
+      salesByMonthCategory: /DataStatistics/GetSupplierSalesMonthCategory
+      salesByMonthBrand: /DataStatistics/GetSupplierSalesMonthBrand
+      batchSaveProduct: /producthandle/batchSaveProduct/
+      queryProduct: /product/searchProductByMulCondition/
+      findProductById: /product/searchProductBySupplierIdAndSpuId/
+      updateProduct: /producthandle/updateProduct/
+      saveProduct: /producthandle/saveProduct/
+      savePicture: /shangpin/SaveMobilePicNew
+      saveInboundWayBill: /WaybillDataService.svc/InboundAirShop
+      saveOutboundWayBill: /WaybillDataService.svc/OutboundAirShop
+      createTrack: /LogisticDataService.svc/CreateTask
+      createTrackFZF: /LogisticDataService.svc/CreateTaskV1
+      getTrack: /LogisticDataService.svc/GetTask
+      getTrackFZF: /LogisticDataService.svc/GetTaskV1
+      getTrackDetail: /LogisticDataService.svc/GetTaskDetailByCTaskNo
+      getTrackDetailFZF: /LogisticDataService.svc/GetTaskDetailByCTaskNoV1
+      getLogisticData: /LogisticDataService.svc/SearchInvoiceByCTaskNo
+      getPrintBoxInfo: /LogisticDataService.svc/SearchPrintBoxInfo
+      countTradeAndCross: /Purchase/CountTradeAndCross
+      findSupplierInfo: /Purchase/FindSupplierContract
+      findReturnAddress: /Purchase/FindSupplierReturnAddress
+      findSupplierDeliverAddress: /Purchase/FindSupplierDeliverAddress
+      findPorderSkuPrice: /Purchase/FindPorderSkuPrice
+      findCGDDetailByOrderNo: /Purchase/FindCGDDetailByOrderNo
+      findPurchaseOrderPid: /Purchase/FindPurchaseOrderPid
+      findProductBrandInfoBySupplierOrder: /Purchase/FindProductBrandInfo
+      searchTaskOrderDetail: /LogisticDataService.svc/SearchTaskOrderDetail
+      studioPendingProducts : /studio/spullist
+      studioSupplierSlots : /studio/slotlist
+      releaseStudioSlot : /studio/releaseslot
+      delSlotProduct: /studio/delslotspu
+      studioSlot : /studio/slotinfo
+      addSpuSlot : /studio/addspu
+      delSpuSlot : /studio/delspu
+      checkSlot : /studio/sendslot
+      slotPrint : /studio/slotprint
+      studioSlots: /studio/studioslotlist
+      applySlot: /studio/applyslot
+      studioList: /studio/studiolist
+      addLogisticSlot: /studio/addslotLogistic
+      slotLogisticInfo: /studio/slotlogisticinfo
+      returnSlotList: /returnslot/returnslotlist
+      receiveSlot: /returnslot/receiveslot
+      receivedSlotInfo: /returnslot/receivedSlotInfo
+      addProductFromScan: /returnslot/scanproduct
+      confirmSlotInfo: /returnslot/confirmSlotInfo
+      addDefective: /returnslot/adddefective
+      defectiveList: /returnslot/defectivelist
+      deleteDefective: /returnslot/deletedefective
+      savePictureForStudio: /api/airstudio/pic/uploadpic
+      returnOrderList: /Purchase/FindOrderSendReturnList
+      findNotOnShelfList: /pending-product/notOnShelfList
+      queryHubProduct: /supplier-product/selectSupplierProductInfo
+      queryHubProductDetail: /supplier-product/detail
+      addHubProduct: /supplier-product/add
+      updateHubProduct: /supplier-product/update
+      hubBatchSaveProduct: /supplier-product/batchSave
+      queryBrandProductUrl: /supplier-product/selectSupplierProduct
+      getVerificationCode: /Account/GetVerificationCode
+      changePassword: /Account/ChangePassword
+      checkVerCodeForFind: /Account/CheckVerCodeForFind
+      changePwdAS: /Account/ChangePwdAS
+      changeEmailAS: /Account/ChangeEmailAS
+      setPwdForFind: /Account/SetPwdForFind
+      bindEmailAndChangePwd: /Account/BindEmailAndChangePwd
+      findAllBrand: /Purchase/FindAllBrand
+      findPorderCanceledbyPage: /Purchase/FindPorderCanceledbyPage
+
+---
+spring:
+  profiles: qa
+  redis:
+    host: 192.168.20.237
+    port: 7000
+    #sentinel:
+     # master: mymaster
+    #  nodes: 192.168.20.237:26379
+    #pool:
+    #  max-active: 20
+    #  min-idle: 3
+airshop:
+  imageCDN:
+    cdnList:
+      - pic1.shangpin.com
+      - pic2.shangpin.com
+      - pic3.shangpin.com
+      - pic4.shangpin.com
+  api:
+    url:
+        host: "http://qa.airshop.shangpin.com/api"
+        productHost: "http://192.168.20.100:8088/iog"
+        picHost: "http://qa.mobilev3.shangpin.com"
+        dhlUrl: "https://xmlpitest-ea.dhl.com/XMLShippingServlet"
+        TMSUrl: "http://qa.tmsservice.shangpin.com"
+        TMS: "http://qa.tms.shangpin.com"
+        ip: "http://192.168.20.234:8082"
+        hbHost : "http://192.168.20.176:8003"
+---
+
+
+---
+spring:
+  profiles: dev
+  redis:
+    host: 192.168.20.237
+    port: 7000
+    #sentinel:
+     # master: mymaster
+    #  nodes: 192.168.20.237:26379
+    #pool:
+    #  max-active: 20
+    #  min-idle: 3
+airshop:
+  imageCDN:
+    cdnList:
+      - pic1.shangpin.com
+      - pic2.shangpin.com
+      - pic3.shangpin.com
+      - pic4.shangpin.com
+  api:
+    url:
+      host: "http://qa.airshop.shangpin.com/api"
+      productHost: "http://192.168.20.100:8088/iog"
+      picHost: "http://qa.mobilev3.shangpin.com"
+      dhlUrl: "https://xmlpitest-ea.dhl.com/XMLShippingServlet"
+      TMSUrl: "http://qa.tmsservice.shangpin.com"
+      TMS: "http://qa.tms.shangpin.com"
+      ip: "http://qa.airshop.com:8082"
+      hbHost : "http://127.0.0.1:8003"
+---
+
+spring:
+  profiles: pro
+  redis:
+    host: 172.20.10.138
+    port: 6379
+airshop:
+  imageCDN:
+    cdnList:
+      - pic1.shangpin.com
+      - pic2.shangpin.com
+      - pic3.shangpin.com
+      - pic4.shangpin.com
+  api:
+    url:
+      host: "http://sopapi.shangpin.com/api"
+      productHost: "http://172.20.11.136:8088/iog"
+      picHost: "http://mobile.apiv3.shangpin.com"
+      dhlUrl: "https://xmlpi-ea.dhl.com/XMLShippingServlet"
+      TMSUrl: "http://tmsservice.spidc1.com"
+      TMS: "http://tms.shangpin.com"
+      ip: "http://airshop.shangpin.com/api/airshop"
+      hbHost: "http://api.ephub.spidc1.com"

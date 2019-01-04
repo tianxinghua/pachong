@@ -1,0 +1,25 @@
+{
+	"Message":"success",
+	"MessageCode":200,
+	"Successed":true,
+	"WaybillTaskList":[{
+		"ImportType":2147483647,
+		"IsPrintInvoices":true,
+		"LogisticCompanyID":2147483647,
+		"LogisticCompanyName":"Fedex",
+		"MasterTrackNo":"6537824001",
+		"OrderCount":3,
+		"OrderProductAmount":3,
+		"OrderProductCount":23,
+		"OrderWeightSum":20,
+		"OutBoundEndTime":"2016-0713T12:00:00",
+		"OutBoundStartTime":"2016-0713T12:00:00",
+		"SendTime":"2016-0713T12:00:00",
+		"TaskBatchNo":"123456",
+		"TaskStatus":1,
+		"TaskType":1,
+		"TranshipmentWarehouseID":2147483647,
+		"WarehouseName":"北京朝阳区三间房东路尚品网",
+		"WaybillTaskID":9223372036854775807
+	}]
+}

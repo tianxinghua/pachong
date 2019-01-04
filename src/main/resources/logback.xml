@@ -1,0 +1,27 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder 默认配置为PatternLayoutEncoder -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="rollingFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/data/logs/8082/api-airshop.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/data/logs/8082/api-airshop.%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.shangpin" level="DEBUG"></logger>
+
+    <root level="ERROR">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="rollingFile"/>
+    </root>
+</configuration>
