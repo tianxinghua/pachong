@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.SpuMapper">
+
+	<resultMap id="spuMap" type="iog_spu">
+		<id column="ID" property="id" />
+		<result column="SUPPLIER_ID" property="supplierId"  />
+		<result column="SPU_ID" property="spuId"  />
+		<result column="SPU_NAME" property="spuName"  />
+		<result column="CATEGORY_GENDER" property="categoryGender"  />
+		<result column="CATEGORY_ID" property="categoryId"  />
+		<result column="CATEGORY_NAME" property="categoryName" />
+		<result column="SUB_CATEGORY_ID" property="subCategoryId"  />
+		<result column="SUB_CATEGORY_NAME" property="subCategoryName" />
+		<result column="BRAND_ID" property="brandId"  />
+		<result column="BRAND_NAME" property="brandName"  />
+		<result column="SEASON_ID" property="seasonId"  />
+        <result column="SEASON_NAME" property="seasonName"/>
+        <result column="PIC_URL" property="picUrl"  />
+        <result column="MATERIAL" property="material" />
+        <result column="PRODUCT_ORIGIN" property="productOrigin" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="LAST_TIME" property="lastTime" />
+
+
+
+	</resultMap>
+	
+
+
+	
+	
+	<sql id="all_spu_column">
+		ID ,
+		SUPPLIER_ID ,
+		SPU_ID,
+		SPU_NAME,CATEGORY_GENDER,
+        CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
+        BRAND_ID,BRAND_NAME,
+        SEASON_ID,SEASON_NAME,
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME
+	</sql>
+
+    <insert id="save"  parameterType="iog_spu" >
+
+
+
+        insert into SPU(ID ,
+        SUPPLIER_ID ,
+        SPU_ID,
+        SPU_NAME,CATEGORY_GENDER,
+        CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
+        BRAND_ID,BRAND_NAME,
+        SEASON_ID,SEASON_NAME,
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME)
+        values(
+            #{id}, #{supplierId}, #{spuId}, #{spuName},#{categoryGender},
+            #{categoryId}, #{categoryName},#{subCategoryId}, #{subCategoryName}, #{brandId}, #{brandName},
+            #{seasonId} , #{seasonName}, #{picUrl}, #{material}, #{productOrigin},
+            #{createTime}, #{lastTime}
+        )
+
+
+    </insert>
+
+
+
+
+    <!-- batch save spu  -->
+    <insert id="saveList"  parameterType="java.util.List" >
+
+
+
+        insert into SPU(ID ,
+        SUPPLIER_ID ,
+        SPU_ID,
+        SPU_NAME,CATEGORY_GENDER,
+        CATEGORY_ID,CATEGORY_NAME,SUB_CATEGORY_ID,SUB_CATEGORY_NAME,
+        BRAND_ID,BRAND_NAME,
+        SEASON_ID,SEASON_NAME,
+        PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME)
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.id}, #{item.supplierId}, #{item.spuId}, #{item.spuName},#{item.categoryGender},
+            #{item.categoryId}, #{item.categoryName},#{item.subCategoryId}, #{item.subCategoryName},
+            #{item.brandId}, #{item.brandName},#{item.seasonId} , #{item.seasonName}, 
+            #{item.picUrl}, #{item.material}, #{item.productOrigin},
+            #{item.createTime}, #{item.lastTime})
+        </foreach>
+
+    </insert>
+
+	<update id="updateMaterial" parameterType="iog_spu" >
+          update SPU
+          <set>
+              <if test="material != null"> MATERIAL = #{material},</if>
+              <if test="lastTime != null"> LAST_TIME = #{lastTime},</if>
+              <if test="productOrigin != null"> PRODUCT_ORIGIN = #{productOrigin},</if>
+              <if test="categoryGender != null"> CATEGORY_GENDER = #{categoryGender},</if>
+              <if test="seasonName != null"> SEASON_NAME = #{seasonName}</if>
+              
+          </set>
+          where  SUPPLIER_ID = #{supplierId}   and   SPU_ID = #{spuId}
+    </update>
+
+	
+</mapper>

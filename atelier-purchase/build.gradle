@@ -1,0 +1,10 @@
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile(
+            "com.google.code.gson:gson:2.2.2",
+            project(':project-common'),
+            project(':openapi-ice'),
+            project(':atelier'),
+            project(':iog-common-product')
+    )
+}

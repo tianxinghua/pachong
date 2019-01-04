@@ -1,0 +1,11 @@
+
+dependencies {
+
+	compile group: 'org.springframework', name: 'spring-web', version: '4.2.5.RELEASE'
+
+
+    compile(
+            project(':iog-common-product'),
+          "com.google.code.gson:gson:2.2.2"
+    )
+}

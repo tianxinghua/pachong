@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.BrandSpMapper">
+
+	<resultMap id="BrandSpResultMap" type="iog_brand_sp">
+
+        <result column="BRAND_ID" property="brandId"  />
+        <result column="BRAND_NAME" property="brandName"  />
+
+	</resultMap>
+
+	
+	<sql id="all_BrandSp_column">
+		BRAND_ID,
+		BRAND_NAME
+	</sql>
+
+    <select id="findCount" resultType="java.lang.Integer">
+        SELECT  COUNT(BRAND_ID) from BRAND_SP
+    </select>
+
+    <select id="findAll" resultMap="BrandSpResultMap">
+        select
+        <include refid="all_BrandSp_column"></include>
+
+        from BRAND_SP
+    </select>
+	
+</mapper>

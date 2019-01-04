@@ -1,0 +1,5 @@
+<root>
+    <item name='org.apache.commons.httpclient.auth.AuthPolicy'>
+        <annotation name='java.lang.Deprecated'/>
+    </item>
+</root>

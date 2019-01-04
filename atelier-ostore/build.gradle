@@ -1,0 +1,26 @@
+
+dependencies {
+    compile(
+            project(':project-common'),
+            project(':iog-common-product'),
+             "com.google.code.gson:gson:2.2.2",
+               project(':iog-product-framework'),
+    )
+}
+
+jar {
+
+    dependsOn copyToLib , copyResources
+    exclude ("**/*.properties")
+
+
+    def manifestCp = configurations.compile.files.collect  {
+        File file = it
+        "lib/${file.name}"
+    }.join(' ')
+
+    manifest {
+        attributes 'Main-Class': 'com.shangpin.iog.ostore.StartUp'
+        attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+    }
+}

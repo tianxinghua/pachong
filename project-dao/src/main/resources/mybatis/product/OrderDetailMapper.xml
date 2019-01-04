@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.iog.product.dao.OrderDetailMapper">
+	<resultMap id="OrderResultMap" type="iog_orderDetail">
+		<id column="ID" property="id" />
+		<result column="UUID" property="uuid"  />
+		<result column="SUPPLIER_ID" property="supplierId"  />
+		<result column="SUPPLIER_NO" property="supplierNo"  />
+		<result column="EP_MASTER_ORDER_NO" property="epMasterOrderNo" />
+		<result column="ORDER_NO" property="orderNo" />
+		<result column="SUPPLIER_ORDER_NO" property="supplierOrderNo"  />
+		<result column="SP_MASTER_ORDER_NO" property="spMasterOrderNo"  />
+		<result column="SP_ORDER_DETAIL_NO" property="spOrderDetailNo" />
+		<result column="SP_PURCHASE_NO" property="spPurchaseNo" />
+		<result column="SP_PURCHASE_DETAIL_NO" property="spPurchaseDetailNo" />
+		<result column="SP_SKU" property="spSku" />
+		<result column="SUPPLIER_SKU" property="supplierSku" />
+		<result column="QUANTITY" property="quantity" />
+		<result column="PURCHASE_PRICE_DETAIL" property="purchasePriceDetail"  />
+		<result column="STATUS" property="status"/>
+		<result column="DELIVERY_NO" property="deliveryNo"/>
+		<result column="CREATE_TIME" property="createTime"  />
+		<result column="UPDATE_TIME" property="updateTime"/>
+		<result column="EXC_STATE" property="excState"  />
+		<result column="EXC_DESC" property="excDesc"  />
+		<result column="EXC_TIME" property="excTime" />
+		<result column="SUPPLIER_NAME" property="supplierName" />
+		
+	</resultMap>
+	<sql id="all_Order_column">
+		ID, UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO,
+		SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO, SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU,
+		SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL, STATUS, DELIVERY_NO, CREATE_TIME,
+		UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME
+	</sql>
+	<sql id="save_column">
+		UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, SUPPLIER_ID, SUPPLIER_NO, SP_MASTER_ORDER_NO,
+		SP_ORDER_DETAIL_NO, SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU, SUPPLIER_SKU,
+		QUANTITY, PURCHASE_PRICE_DETAIL, STATUS, DELIVERY_NO, CREATE_TIME
+	</sql>
+	<insert id="saveOrderDetailDTO" parameterType="iog_orderDetail">
+		insert into 
+			ORDER_DETAIL (
+		<include refid="save_column"/>
+		) values(#{uuid},#{epMasterOrderNo},#{orderNo},#{supplierOrderNo},#{supplierId},#{supplierNo},#{spMasterOrderNo},
+		#{spOrderDetailNo},#{spPurchaseNo},#{spPurchaseDetailNo}, #{spSku},#{supplierSku},#{quantity},#{purchasePriceDetail},
+		#{status},#{deliveryNo},#{createTime})
+	</insert>
+	<update id="updateByOrderNo"  parameterType="iog_orderDetail" >
+		update ORDER_DETAIL
+		<set>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+			<if test="spPurchaseDetailNo != null">SP_PURCHASE_DETAIL_NO = #{spPurchaseDetailNo},</if>
+			<if test="spOrderDetailNo != null">SP_ORDER_DETAIL_NO = #{spOrderDetailNo},</if>
+			<if test="spPurchaseNo != null">SP_PURCHASE_NO = #{spPurchaseNo},</if>
+			<if test="deliveryNo != null">DELIVERY_NO = #{deliveryNo},</if>
+			<if test="excState != null">EXC_STATE = #{excState},</if>
+			<if test="excDesc != null">EXC_DESC = #{excDesc},</if>
+			<if test="purchasePriceDetail != null">PURCHASE_PRICE_DETAIL = #{purchasePriceDetail},</if>
+			<if test="excTime != null">EXC_TIME = #{excTime}</if>
+			<if test="supplierOrderNo != null">SUPPLIER_ORDER_NO = #{supplierOrderNo}</if>
+		</set>
+		where ORDER_NO = #{orderNo} and SUPPLIER_ID=#{supplierId}
+	</update>
+	<select id ="findSubOrderListByMOrderNo" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL 
+		    where SP_MASTER_ORDER_NO like '${spMorderNo}%'
+	</select>
+	<select id="findSubOrderByPurchaseNo" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		where SP_PURCHASE_NO=#{purchaseNo}
+	</select>
+	<select id="findSubOrderByOrderNoAndSupplierId" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		where ORDER_NO=#{orderNo} and SUPPLIER_ID = #{supplierId}
+	</select>
+	
+	<select id="findOrderDetailByOrderDetailNo" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		where SP_ORDER_DETAIL_NO=#{orderDetailNo}
+	</select>
+	
+	
+	<select id="findByUuId" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		where UUID=#{uuid}
+	</select>
+	<select id="findBySIDAndSNOAndStatus" parameterType="java.lang.String" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId} and</if>
+			<if test="null!=supplierNo">SUPPLIER_NO=#{supplierNo} and</if>
+			<if test="null!=status">STATUS=#{status}</if>
+		</where>
+	</select>
+	<select id="findBySupplierIdAndOrderStatusAndDateAndExcSatus" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+			<if test="null!=excState">and  EXC_STATE = #{excState}</if>
+			<if test="null!=date">and CREATE_TIME >=DATE_SUB(#{date},INTERVAL  #{interval} HOUR)</if>
+		</where>
+	</select>
+	<select id="findBySupplierIdAndStatus"  resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+		</where>
+	</select>
+	<select id="findBySupplierIdAndStatusAndDate"  resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+			<if test="null!=date">and CREATE_TIME >=DATE_SUB(#{date},INTERVAL  12 HOUR)</if>
+		</where>
+	</select>
+	<select id="findBySupplierIdAndStatusAndTime" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+			<if test="null!=startTime">and CREATE_TIME >= #{startTime}</if>
+			<if test="null!=endTime">
+				<![CDATA[ and CREATE_TIME < #{endTime}   ]]>
+				<!-- and CREATE_TIME <= #{endTime} -->
+			</if>
+		</where>
+	</select>
+	
+	
+	
+		<select id="getOrderTotalBySpPurchaseNo" resultType="int">
+		select
+			count(*)
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=startTime">and CREATE_TIME >= #{startTime}</if>
+			<if test="null!=endTime">
+				<![CDATA[ and UPDATE_TIME < #{endTime}   ]]>
+				<!-- and CREATE_TIME <= #{endTime} -->
+			</if>
+			and SP_PURCHASE_NO is not null
+		</where>
+	</select>
+	
+	
+	
+	<select id="findBySupplierIdAndStatusAndUpdateTime" resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=supplierId">SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=status">and  STATUS = #{status}</if>
+			<if test="null!=startTime">and UPDATE_TIME >= #{startTime}</if>
+			<if test="null!=endTime">
+				<![CDATA[ and UPDATE_TIME < #{endTime}   ]]>
+				<!-- and CREATE_TIME <= #{endTime} -->
+			</if>
+		</where>
+	</select>
+	<select id="getOrderBySupplierIdAndTime"  resultMap="OrderResultMap">
+		select
+		ID, UUID,EP_MASTER_ORDER_NO,ORDER_NO,SUPPLIER_ORDER_NO, su.SUPPLIER_ID, SUPPLIER_NO,
+		SP_MASTER_ORDER_NO, SP_ORDER_DETAIL_NO, SP_PURCHASE_NO, SP_PURCHASE_DETAIL_NO, SP_SKU,
+		SUPPLIER_SKU, QUANTITY, PURCHASE_PRICE_DETAIL, STATUS, DELIVERY_NO, CREATE_TIME,
+		UPDATE_TIME, EXC_STATE, EXC_DESC, EXC_TIME,su.SUPPLIER_NAME
+		from ORDER_DETAIL ddd left join SUPPLIER su on ddd.SUPPLIER_ID = su.SUPPLIER_ID
+		<where>
+			su.SUPPLIER_STATE = '1'
+			<if test="null!=supplierId">and ddd.SUPPLIER_ID=#{supplierId}</if>
+			<if test="null!=startDate">and CREATE_TIME >=#{startDate}</if>
+			<if test="null!=endDate">
+				<![CDATA[ and CREATE_TIME <=#{endDate}    ]]>
+			</if>
+		</where>
+		order by CREATE_TIME desc
+	</select>
+	<select id="findExceptionOrder"  resultMap="OrderResultMap">
+		select ID , SUPPLIER_ID, UUID , ORDER_NO, STATUS , CREATE_TIME , EXC_STATE , EXC_DESC
+		,EXC_TIME from ORDER_DETAIL WHERE EXC_STATE='1'
+	</select>
+	<update id="updateOrderStatus" parameterType="Map" >
+		update ORDER_DETAIL
+		<set>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime}</if>
+		</set>
+		where UUID = #{uuid}
+	</update>
+	<update id="updateOrderExceptionMsg" parameterType="Map" >
+		update ORDER_DETAIL
+		<set>
+			<if test="excState != null">EXC_STATE = #{excState},</if>
+			<if test="excDesc != null">EXC_DESC = #{excDesc},</if>
+			<if test="excTime != null">EXC_TIME = #{excTime}</if>
+		</set>
+		where UUID = #{uuid}
+	</update>
+	<update id="updateDeliveryNo" parameterType="Map" >
+		update ORDER_DETAIL
+		<set>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+			<if test="deliveryNo != null">DELIVERY_NO = #{deliveryNo}</if>
+		</set>
+		where UUID = #{uuid}
+	</update>
+	<update id="updateAllByMap"  parameterType="Map" >
+		update ORDER_DETAIL
+		<set>
+			<if test="status != null">STATUS = #{status},</if>
+			<if test="orderNo != null">ORDER_NO = #{orderNo},</if>
+			<if test="updateTime != null">UPDATE_TIME = #{updateTime},</if>
+			<if test="supplierOrderNo != null">SUPPLIER_ORDER_NO = #{supplierOrderNo},</if>
+			<if test="spPurchaseDetailNo != null">SP_PURCHASE_DETAIL_NO = #{spPurchaseDetailNo},</if>
+			<if test="spPurchaseNo != null">SP_PURCHASE_NO = #{spPurchaseNo},</if>
+			<if test="deliveryNo != null">DELIVERY_NO = #{deliveryNo},</if>
+			<if test="excState != null">EXC_STATE = #{excState},</if>
+			<if test="excDesc != null">EXC_DESC = #{excDesc},</if>
+			<if test="purchasePriceDetail != null">PURCHASE_PRICE_DETAIL = #{purchasePriceDetail},</if>
+			<if test="excTime != null">EXC_TIME = #{excTime}</if>
+		</set>
+		where UUID = #{uuid}
+	</update>
+	<select id="getDetailDTOByEpMasterOrderNo"  resultMap="OrderResultMap">
+		select
+		<include refid="all_Order_column"/>
+		from ORDER_DETAIL
+		<where>
+			<if test="null!=epMasterOrderNo">EP_MASTER_ORDER_NO=#{epMasterOrderNo}</if>
+		</where>
+	</select>
+	
+	<select id="getOrderTotalBySupplierIdAndTime"  resultType="int">
+        select
+        count(*)
+        from ORDER_DETAIL ddd
+        <where>
+            <if test="null!=supplierId">
+                ddd.SUPPLIER_ID=#{supplierId}
+            </if>         
+        </where>
+    </select>
+	
+</mapper>

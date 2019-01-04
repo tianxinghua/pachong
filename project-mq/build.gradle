@@ -1,0 +1,33 @@
+
+
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter(org.apache.tools.ant.filters.ReplaceTokens,
+                tokens: loadGroovy()
+        )
+    }
+}
+
+dependencies {
+    compile(
+
+
+
+            "com.fasterxml.jackson.core:jackson-annotations:${fasterxml_jackson_version}",
+            "com.fasterxml.jackson.core:jackson-databind:${fasterxml_jackson_version}",
+            project(':project-framework'),
+            project(':project-common'),
+            project(':openapi-ice'),
+            "com.github.pagehelper:pagehelper:3.7.3",
+            "com.github.jsqlparser:jsqlparser:0.9.1",
+            'org.springframework.amqp:spring-rabbit:1.5.6.RELEASE',
+
+    )
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+
+jar{
+    dependsOn copyResources  , copyResourcesToClasses
+}
