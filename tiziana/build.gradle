@@ -1,0 +1,28 @@
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile(
+           		"com.google.code.gson:gson:2.3.1",
+            project(':iog-common-product'),
+        
+ 
+    )
+}
+
+jar {
+
+    dependsOn copyToLib , copyResources ,dependsClassPath
+    exclude ("**/*.properties")
+   // def manifestCp = configurations.compile.files.collect  {
+   //    File file = it
+   //     "lib/${file.name}" 
+   // }.join(' ')
+
+    manifest {
+   		 attributes 'Main-Class': 'com.shangpin.iog.tiziana.StartUp'
+   
+   
+   //     attributes 'Class-Path': '. ./conf/  ' +  manifestCp
+    }
+}
